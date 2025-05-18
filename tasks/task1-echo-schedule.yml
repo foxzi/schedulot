@@ -1,0 +1,10 @@
+id: "task1-echo-schedule"
+description: "Простая задача echo, запускаемая по расписанию."
+triggers:
+  - type: "schedule"
+    schedule: "15 * * * * *" # Каждые 10 секунд
+action:
+  type: "command"
+  command:
+    path: "echo"
+    args: ["Привет от task1! Время:", "$(date)"]

@@ -1,0 +1,32 @@
+# Go build and dependency files
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+
+# Output binaries
+taskmanager
+
+# Logs
+*.log
+app.log
+
+# IDE/editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Dependency directories
+vendor/
+
+# Ignore all tasks except example YAMLs (keep .yml/.yaml for reference, ignore secrets or temp files)
+!tasks/*.yml
+!tasks/*.yaml
+tasks/*.secret*
+tasks/*.tmp*
+
+go.sum

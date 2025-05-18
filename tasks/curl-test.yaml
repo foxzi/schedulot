@@ -1,0 +1,12 @@
+id: "task2-http-get"
+description: "Задача для выполнения HTTP GET запроса."
+triggers:
+  - type: "schedule"
+    schedule: "0 * * * * *" # Каждую минуту
+action:
+  type: "http"
+  http_request:
+    url: "https://httpbin.org/get?param=value"
+    method: "GET"
+    headers:
+      X-Custom-Header: "GoTaskManager"
