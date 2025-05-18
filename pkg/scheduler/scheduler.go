@@ -16,18 +16,19 @@ import (
 
 // Scheduler manages and runs tasks.
 type Scheduler struct {
-	tasks         map[string]task.Task // taskID -> Task
-	taskFilePaths map[string]string    // taskID -> filePath
-	executor      *executor.Executor
-	logger        *logger.Logger
-	cronScheduler *cron.Cron
-	taskResults   map[string]taskResult    // Stores the result of the last execution of each task
-	mu            sync.RWMutex             // For concurrent access to taskResults, tasks, taskFilePaths
-	notifyChan    chan taskExecutionUpdate // Channel to notify about task completion
-	stopChan      chan struct{}            // Channel to signal scheduler shutdown
-	wg            sync.WaitGroup           // To wait for goroutines to finish
-	taskDir       string                   // Directory to watch for task file changes
-	watcher       *fsnotify.Watcher        // Filesystem watcher
+	tasks            map[string]task.Task // taskID -> Task
+	taskFilePaths    map[string]string    // taskID -> filePath
+	executor         *executor.Executor
+	logger           *logger.Logger
+	cronScheduler    *cron.Cron
+	taskResults      map[string]taskResult     // Stores the result of the last execution of each task
+	mu               sync.RWMutex              // For concurrent access to taskResults, tasks, taskFilePaths, taskCronEntryIDs
+	notifyChan       chan taskExecutionUpdate  // Channel to notify about task completion
+	stopChan         chan struct{}             // Channel to signal scheduler shutdown
+	wg               sync.WaitGroup            // To wait for goroutines to finish
+	taskDir          string                    // Directory to watch for task file changes
+	watcher          *fsnotify.Watcher         // Filesystem watcher
+	taskCronEntryIDs map[string][]cron.EntryID // taskID -> list of EntryIDs for its schedule triggers
 }
 
 type taskResult struct {
@@ -49,49 +50,65 @@ func New(exec *executor.Executor, l *logger.Logger, taskDirPath string) (*Schedu
 	}
 
 	s := &Scheduler{
-		tasks:         make(map[string]task.Task),
-		taskFilePaths: make(map[string]string),
-		executor:      exec,
-		logger:        l,
-		cronScheduler: cron.New(cron.WithSeconds()), // Support for second-level precision if needed
-		taskResults:   make(map[string]taskResult),
-		notifyChan:    make(chan taskExecutionUpdate, 100), // Buffered channel
-		stopChan:      make(chan struct{}),
-		taskDir:       taskDirPath,
-		watcher:       watcher,
+		tasks:            make(map[string]task.Task),
+		taskFilePaths:    make(map[string]string),
+		executor:         exec,
+		logger:           l,
+		cronScheduler:    cron.New(cron.WithSeconds()), // Support for second-level precision if needed
+		taskResults:      make(map[string]taskResult),
+		notifyChan:       make(chan taskExecutionUpdate, 100), // Buffered channel
+		stopChan:         make(chan struct{}),
+		taskDir:          taskDirPath,
+		watcher:          watcher,
+		taskCronEntryIDs: make(map[string][]cron.EntryID), // Initialize the new map
 	}
 	return s, nil
 }
 
 // AddTask adds a task to the scheduler or updates it if it already exists.
-// It also stores the file path of the task.
+// It also stores the file path of the task and manages cron entries.
 func (s *Scheduler) AddTask(t task.Task, filePath string) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	// If task already exists, remove its old cron jobs first
-	if oldTask, exists := s.tasks[t.ID]; exists {
-		s.removeCronJobs(oldTask.ID)
-		s.logger.Info(t.ID, "Updating existing task")
+	// Remove existing cron jobs for this specific task ID before adding new ones
+	if entryIDs, ok := s.taskCronEntryIDs[t.ID]; ok {
+		for _, entryID := range entryIDs {
+			s.cronScheduler.Remove(entryID)
+		}
+		s.logger.Info(t.ID, "Removed %d old cron entries for task", len(entryIDs))
+	}
+	// Ensure the entry for this task ID is clean before adding new IDs
+	s.taskCronEntryIDs[t.ID] = []cron.EntryID{}
+
+	if _, exists := s.tasks[t.ID]; exists {
+		s.logger.Info(t.ID, "Updating existing task definition in scheduler map")
 	}
 
 	s.tasks[t.ID] = t
 	s.taskFilePaths[t.ID] = filePath
-	s.logger.Info(t.ID, "Task added/updated in scheduler from file %s", filePath)
+	s.logger.Info(t.ID, "Task added/updated in scheduler's internal map from file %s", filePath)
 
+	var currentTaskEntryIDs []cron.EntryID
 	for _, trigger := range t.Triggers {
 		if trigger.Type == task.TriggerTypeSchedule && trigger.Schedule != "" {
-			_, err := s.cronScheduler.AddFunc(trigger.Schedule, func() {
-				s.logger.Info(t.ID, "Cron triggered for task")
-				s.tryRunTask(t.ID, nil) // Triggered by schedule, no prior dependency
+			entryID, err := s.cronScheduler.AddFunc(trigger.Schedule, func() {
+				// It's crucial that the taskID used here is from the loop variable 't'
+				// to ensure the correct taskID is captured in the closure.
+				taskIDForClosure := t.ID
+				s.logger.Info(taskIDForClosure, "Cron triggered for task")
+				s.tryRunTask(taskIDForClosure, nil) // Triggered by schedule, no prior dependency
 			})
 			if err != nil {
-				s.logger.Error(t.ID, "Failed to schedule task", err)
-				return fmt.Errorf("failed to schedule task %s: %w", t.ID, err)
+				s.logger.Error(t.ID, "Failed to schedule task with cron", err)
+				// Consider how to handle partial failures. For now, return error.
+				return fmt.Errorf("failed to schedule task %s with cron: %s: %w", t.ID, trigger.Schedule, err)
 			}
-			s.logger.Info(t.ID, "Task scheduled with cron: %s", trigger.Schedule)
+			currentTaskEntryIDs = append(currentTaskEntryIDs, entryID)
+			s.logger.Info(t.ID, "Task scheduled with cron: %s, EntryID: %d", trigger.Schedule, entryID)
 		}
 	}
+	s.taskCronEntryIDs[t.ID] = currentTaskEntryIDs // Store the new entry IDs for this task
 	return nil
 }
 
@@ -202,45 +219,44 @@ func (s *Scheduler) loadAndScheduleTasksFromDir() {
 	if err != nil {
 		s.logger.Error("Scheduler", "Error loading tasks from directory during initial load", err)
 		// Decide if we should stop or continue with potentially no tasks
+		// For now, we continue, potentially with an empty task set.
 	}
 
-	s.mu.Lock()
-	// Clear existing tasks that might have been removed or changed
-	currentTasks := make(map[string]task.Task)
-	currentFilePaths := make(map[string]string)
+	s.mu.Lock() // Lock for modifying shared scheduler state (tasks, taskFilePaths, taskCronEntryIDs)
 
-	for filePath, t := range loadedTasksMap {
-		currentTasks[t.ID] = t
-		currentFilePaths[t.ID] = filePath
-		// Add or update task (AddTask handles cron job updates)
-		// Need to release lock temporarily or AddTask needs to be callable without deadlock
-		// For simplicity, we'll manage cron jobs here after collecting all tasks.
+	newlyLoadedTaskIDs := make(map[string]bool)
+	for _, t := range loadedTasksMap {
+		newlyLoadedTaskIDs[t.ID] = true
 	}
-	// Remove cron jobs for tasks that are no longer present
-	for taskID := range s.tasks {
-		if _, exists := currentTasks[taskID]; !exists {
-			s.removeCronJobs(taskID)
+
+	// Identify and remove tasks (and their cron jobs) that no longer exist in the loaded files
+	for taskIDFromOldSet := range s.tasks {
+		if _, stillExists := newlyLoadedTaskIDs[taskIDFromOldSet]; !stillExists {
+			s.logger.Info("Scheduler", "Task %s is no longer present in config files. Removing it and its cron jobs.", taskIDFromOldSet)
+			s.removeCronJobs(taskIDFromOldSet) // This will use stored EntryIDs and clean up taskCronEntryIDs map
+			delete(s.tasks, taskIDFromOldSet)
+			delete(s.taskFilePaths, taskIDFromOldSet)
+			// Also remove from taskResults if desired, though not strictly necessary for scheduling
+			// delete(s.taskResults, taskIDFromOldSet)
 		}
 	}
 
-	s.tasks = currentTasks
-	s.taskFilePaths = currentFilePaths
-	s.mu.Unlock() // Unlock before calling AddTask or scheduling
-
-	// Schedule all loaded tasks
-	tasksToSchedule := make([]task.Task, 0, len(s.tasks))
-	s.mu.RLock()
-	for _, t := range s.tasks {
-		tasksToSchedule = append(tasksToSchedule, t)
+	// Update s.tasks and s.taskFilePaths with the newly loaded tasks
+	// Clear and repopulate to ensure consistency
+	s.tasks = make(map[string]task.Task)
+	s.taskFilePaths = make(map[string]string)
+	for filePath, t := range loadedTasksMap {
+		s.tasks[t.ID] = t
+		s.taskFilePaths[t.ID] = filePath
 	}
-	s.mu.RUnlock()
 
-	for _, t := range tasksToSchedule {
-		// Re-evaluate AddTask to ensure it correctly updates cron jobs without issues
-		// For now, let's assume AddTask is robust or we handle cron scheduling explicitly here.
-		// The AddTask function was modified to handle updates, so this should be fine.
-		filePath := s.taskFilePaths[t.ID]              // We need the filePath for AddTask
-		if err := s.AddTask(t, filePath); err != nil { // This will re-add/update cron jobs
+	s.mu.Unlock() // Unlock before calling AddTask in a loop, as AddTask acquires its own lock.
+
+	// Add or Update tasks in the scheduler, which will handle their cron job (re)scheduling.
+	// Iterate over the tasks that were actually loaded from disk.
+	for _, t := range loadedTasksMap { // Iterate using loadedTasksMap to ensure we use the latest definitions
+		filePath := s.taskFilePaths[t.ID]              // Get the filepath from the updated map (or could get from loadedTasksMap's key)
+		if err := s.AddTask(t, filePath); err != nil { // AddTask now correctly handles its own cron entries
 			s.logger.Error("Scheduler", fmt.Sprintf("Error re-adding/updating task %s during directory reload", t.ID), err)
 		}
 	}
@@ -298,21 +314,21 @@ func (s *Scheduler) handleTaskFileChange(event fsnotify.Event) {
 }
 
 // removeCronJobs removes all cron entries associated with a task ID.
+// This function expects s.mu to be held by the caller if necessary (e.g. when modifying s.taskCronEntryIDs).
 func (s *Scheduler) removeCronJobs(taskID string) {
-	s.mu.RLock() // Ensure we are not modifying cronScheduler.entries while iterating
-	// entries := s.cronScheduler.Entries() // This line was causing an error because `entries` was unused.
-	// It's removed as the logic relies on AddTask to manage cron job updates.
-	s.mu.RUnlock()
+	// s.mu.Lock() // Caller should handle locking if concurrent access to taskCronEntryIDs is possible without it
+	// defer s.mu.Unlock()
 
-	// The current cron library (robfig/cron/v3) doesn't make it easy to identify jobs
-	// by a custom ID after they've been added via AddFunc.
-	// The AddFunc returns an EntryID, which we should store if we want to remove specific jobs.
-
-	// For now, we rely on the fact that `loadAndScheduleTasksFromDir` rebuilds the schedule.
-	// When a task is removed from the `s.tasks` map, its cron jobs won't be re-added.
-	// The `cron.New()` effectively clears old jobs when `loadAndScheduleTasksFromDir` re-initializes scheduling.
-	// This is handled by AddTask now.
-	s.logger.Info(taskID, "Attempted to remove cron jobs (actual removal depends on AddTask logic)")
+	if entryIDs, ok := s.taskCronEntryIDs[taskID]; ok {
+		s.logger.Info(taskID, "Removing %d cron entries for task", len(entryIDs))
+		for _, entryID := range entryIDs {
+			s.cronScheduler.Remove(entryID)
+		}
+		delete(s.taskCronEntryIDs, taskID) // Clean up the map entry for this task
+		s.logger.Info(taskID, "Successfully removed cron entries and map key for task", taskID)
+	} else {
+		s.logger.Info(taskID, "No cron entries found in map to remove for task")
+	}
 }
 
 func (s *Scheduler) initialDependencyCheck() {

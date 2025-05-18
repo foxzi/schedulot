@@ -12,6 +12,12 @@ taskmanager
 # Logs
 *.log
 app.log
+=======
+/taskmanager
+
+# Logs
+*.log
+>>>>>>> ce77a2f (Fix: correct cron job management and .gitignore)
 
 # Logs
 *.log

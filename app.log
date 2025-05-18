@@ -2310,3 +2310,501 @@ INFO: 2025/05/19 00:42:15 logger.go:31: TaskID: task1-echo-schedule - Cron trigg
 INFO: 2025/05/19 00:42:15 logger.go:31: TaskID: task1-echo-schedule - Starting task execution
 INFO: 2025/05/19 00:42:15 logger.go:31: TaskID: task1-echo-schedule - Execution Result - TaskID: task1-echo-schedule, Status: SUCCESS, Duration: 1.798453ms, Output: Привет от task1! Время: $(date)
 INFO: 2025/05/19 00:42:15 logger.go:31: TaskID: task1-echo-schedule - Received completion notification. Success: true
+INFO: 2025/05/19 00:43:01 logger.go:31: TaskID: task2-http-get - Cron triggered for task
+INFO: 2025/05/19 00:43:01 logger.go:31: TaskID: task2-http-get - Starting task execution
+INFO: 2025/05/19 00:43:02 logger.go:31: TaskID: task2-http-get - Execution Result - TaskID: task2-http-get, Status: SUCCESS, Duration: 1.033430491s, Output: {
+  "args": {
+    "param": "value"
+  }, 
+  "headers": {
+    "Accept-Encoding": "gzip", 
+    "Host": "httpbin.org", 
+    "User-Agent": "Go-http-client/2.0", 
+    "X-Amzn-Trace-Id": "Root=1-682a5466-0816fea92534215a19ad3f36", 
+    "X-Custom-Header": "GoTaskManager"
+  }, 
+  "origin": "78.138.130.109", 
+  "url": "https://httpbin.org/get?param=value"
+}
+INFO: 2025/05/19 00:43:02 logger.go:31: TaskID: task2-http-get - Received completion notification. Success: true
+INFO: 2025/05/19 00:43:15 logger.go:31: TaskID: task1-echo-schedule - Cron triggered for task
+INFO: 2025/05/19 00:43:15 logger.go:31: TaskID: task1-echo-schedule - Starting task execution
+INFO: 2025/05/19 00:43:15 logger.go:31: TaskID: task1-echo-schedule - Execution Result - TaskID: task1-echo-schedule, Status: SUCCESS, Duration: 2.11533ms, Output: Привет от task1! Время: $(date)
+INFO: 2025/05/19 00:43:15 logger.go:31: TaskID: task1-echo-schedule - Received completion notification. Success: true
+INFO: 2025/05/19 00:43:28 logger.go:31: TaskID: Main - Shutdown signal received. Stopping scheduler...
+INFO: 2025/05/19 00:43:28 logger.go:31: TaskID: Scheduler - Stopping scheduler...
+INFO: 2025/05/19 00:43:28 logger.go:31: TaskID: Scheduler - Cron scheduler stopped.
+INFO: 2025/05/19 00:43:28 logger.go:31: TaskID: SchedulerListener - Stopping listener for task completions.
+INFO: 2025/05/19 00:43:28 logger.go:31: TaskID: Scheduler - Scheduler stopped gracefully.
+INFO: 2025/05/19 00:43:28 logger.go:31: TaskID: Main - Application stopped.
+INFO: 2025/05/19 00:43:42 logger.go:31: TaskID: Main - Starting tasks validation in directory: /home/piligrim/Work/golang/gotask2/tasks
+INFO: 2025/05/19 00:43:42 logger.go:31: TaskID: Main - Successfully validated 2 task(s).
+INFO: 2025/05/19 00:43:42 logger.go:31: TaskID: Main -   - Valid task ID: task2-http-get from file: /home/piligrim/Work/golang/gotask2/tasks/curl-test.yaml
+INFO: 2025/05/19 00:43:42 logger.go:31: TaskID: Main -   - Valid task ID: task1-echo-schedule from file: /home/piligrim/Work/golang/gotask2/tasks/task1-echo-schedule.yml
+INFO: 2025/05/19 00:43:42 logger.go:31: TaskID: Main - Task validation finished.
+INFO: 2025/05/19 00:43:47 logger.go:31: TaskID: Main - Application starting...
+INFO: 2025/05/19 00:43:47 logger.go:31: TaskID: Main - Using tasks directory: /home/piligrim/Work/golang/gotask2/tasks
+INFO: 2025/05/19 00:43:47 logger.go:31: TaskID: Main - Using log file: app.log
+INFO: 2025/05/19 00:43:47 logger.go:31: TaskID: Scheduler - Starting scheduler...
+INFO: 2025/05/19 00:43:47 logger.go:31: TaskID: Scheduler - Cron scheduler started.
+INFO: 2025/05/19 00:43:47 logger.go:31: TaskID: Scheduler - Performing initial load and scheduling of tasks from directory: /home/piligrim/Work/golang/gotask2/tasks
+INFO: 2025/05/19 00:43:47 logger.go:31: TaskID: SchedulerWatcher - Started watching directory: /home/piligrim/Work/golang/gotask2/tasks
+INFO: 2025/05/19 00:43:47 logger.go:31: TaskID: SchedulerListener - Starting to listen for task completions.
+INFO: 2025/05/19 00:45:30 logger.go:31: TaskID: Main - Application starting...
+INFO: 2025/05/19 00:45:30 logger.go:31: TaskID: Main - Using tasks directory: /home/piligrim/Work/golang/gotask2/tasks
+INFO: 2025/05/19 00:45:30 logger.go:31: TaskID: Main - Using log file: app.log
+INFO: 2025/05/19 00:45:30 logger.go:31: TaskID: Scheduler - Starting scheduler...
+INFO: 2025/05/19 00:45:30 logger.go:31: TaskID: Scheduler - Cron scheduler started.
+INFO: 2025/05/19 00:45:30 logger.go:31: TaskID: Scheduler - Performing initial load and scheduling of tasks from directory: /home/piligrim/Work/golang/gotask2/tasks
+INFO: 2025/05/19 00:45:30 logger.go:31: TaskID: SchedulerListener - Starting to listen for task completions.
+INFO: 2025/05/19 00:45:30 logger.go:31: TaskID: SchedulerWatcher - Started watching directory: /home/piligrim/Work/golang/gotask2/tasks
+INFO: 2025/05/19 00:45:38 logger.go:31: TaskID: Main - Application starting...
+INFO: 2025/05/19 00:45:38 logger.go:31: TaskID: Main - Using tasks directory: /home/piligrim/Work/golang/gotask2/tasks
+INFO: 2025/05/19 00:45:38 logger.go:31: TaskID: Main - Using log file: app.log
+INFO: 2025/05/19 00:45:38 logger.go:31: TaskID: Scheduler - Starting scheduler...
+INFO: 2025/05/19 00:45:38 logger.go:31: TaskID: Scheduler - Cron scheduler started.
+INFO: 2025/05/19 00:45:38 logger.go:31: TaskID: Scheduler - Performing initial load and scheduling of tasks from directory: /home/piligrim/Work/golang/gotask2/tasks
+INFO: 2025/05/19 00:45:38 logger.go:31: TaskID: SchedulerListener - Starting to listen for task completions.
+INFO: 2025/05/19 00:45:38 logger.go:31: TaskID: SchedulerWatcher - Started watching directory: /home/piligrim/Work/golang/gotask2/tasks
+INFO: 2025/05/19 00:46:40 logger.go:31: TaskID: SchedulerWatcher - Received fs event: WRITE         "/home/piligrim/Work/golang/gotask2/tasks/curl-test.yaml"
+INFO: 2025/05/19 00:46:40 logger.go:31: TaskID: SchedulerWatcher - Task file change detected: /home/piligrim/Work/golang/gotask2/tasks/curl-test.yaml. Reloading tasks.
+INFO: 2025/05/19 00:46:40 logger.go:31: TaskID: Scheduler - Handling task file change for: /home/piligrim/Work/golang/gotask2/tasks/curl-test.yaml
+INFO: 2025/05/19 00:46:40 logger.go:31: TaskID: Scheduler - Performing initial load and scheduling of tasks from directory: /home/piligrim/Work/golang/gotask2/tasks
+INFO: 2025/05/19 00:47:58 logger.go:31: TaskID: Main - Application starting...
+INFO: 2025/05/19 00:47:58 logger.go:31: TaskID: Main - Using tasks directory: /home/piligrim/Work/golang/gotask2/tasks
+INFO: 2025/05/19 00:47:58 logger.go:31: TaskID: Main - Using log file: app.log
+INFO: 2025/05/19 00:47:58 logger.go:31: TaskID: Scheduler - Starting scheduler...
+INFO: 2025/05/19 00:47:58 logger.go:31: TaskID: Scheduler - Cron scheduler started.
+INFO: 2025/05/19 00:47:58 logger.go:31: TaskID: Scheduler - Performing initial load and scheduling of tasks from directory: /home/piligrim/Work/golang/gotask2/tasks
+INFO: 2025/05/19 00:47:58 logger.go:31: TaskID: SchedulerListener - Starting to listen for task completions.
+INFO: 2025/05/19 00:47:58 logger.go:31: TaskID: SchedulerWatcher - Started watching directory: /home/piligrim/Work/golang/gotask2/tasks
+INFO: 2025/05/19 01:00:02 logger.go:31: TaskID: Main - Application starting...
+INFO: 2025/05/19 01:00:02 logger.go:31: TaskID: Main - Using tasks directory: /home/piligrim/Work/golang/gotask2/tasks
+INFO: 2025/05/19 01:00:02 logger.go:31: TaskID: Main - Using log file: app.log
+INFO: 2025/05/19 01:00:02 logger.go:31: TaskID: Scheduler - Starting scheduler...
+INFO: 2025/05/19 01:00:02 logger.go:31: TaskID: Scheduler - Cron scheduler started.
+INFO: 2025/05/19 01:00:02 logger.go:31: TaskID: Scheduler - Performing initial load and scheduling of tasks from directory: /home/piligrim/Work/golang/gotask2/tasks
+INFO: 2025/05/19 01:00:02 logger.go:31: TaskID: SchedulerListener - Starting to listen for task completions.
+INFO: 2025/05/19 01:00:02 logger.go:31: TaskID: SchedulerWatcher - Started watching directory: /home/piligrim/Work/golang/gotask2/tasks
+INFO: 2025/05/19 01:00:02 logger.go:31: TaskID: task2-http-get - Updating existing task definition in scheduler map
+INFO: 2025/05/19 01:00:02 logger.go:31: TaskID: task2-http-get - Task added/updated in scheduler's internal map from file /home/piligrim/Work/golang/gotask2/tasks/curl-test.yaml
+INFO: 2025/05/19 01:00:02 logger.go:31: TaskID: task2-http-get - Task scheduled with cron: */15 * * * * *, EntryID: 1
+INFO: 2025/05/19 01:00:02 logger.go:31: TaskID: task1-echo-schedule - Updating existing task definition in scheduler map
+INFO: 2025/05/19 01:00:02 logger.go:31: TaskID: task1-echo-schedule - Task added/updated in scheduler's internal map from file /home/piligrim/Work/golang/gotask2/tasks/task1-echo-schedule.yml
+INFO: 2025/05/19 01:00:02 logger.go:31: TaskID: task1-echo-schedule - Task scheduled with cron: */30 * * * * *, EntryID: 2
+INFO: 2025/05/19 01:00:02 logger.go:31: TaskID: Main - Task scheduler started. Press Ctrl+C to exit.
+INFO: 2025/05/19 01:00:15 logger.go:31: TaskID: task2-http-get - Cron triggered for task
+INFO: 2025/05/19 01:00:15 logger.go:31: TaskID: task2-http-get - Starting task execution
+INFO: 2025/05/19 01:00:15 logger.go:31: TaskID: task2-http-get - Execution Result - TaskID: task2-http-get, Status: SUCCESS, Duration: 828.567071ms, Output: {
+  "args": {
+    "param": "value"
+  }, 
+  "headers": {
+    "Accept-Encoding": "gzip", 
+    "Host": "httpbin.org", 
+    "User-Agent": "Go-http-client/2.0", 
+    "X-Amzn-Trace-Id": "Root=1-682a586f-44a0b7087b2c7ff2380e4229", 
+    "X-Custom-Header": "GoTaskManager"
+  }, 
+  "origin": "78.138.130.109", 
+  "url": "https://httpbin.org/get?param=value"
+}
+INFO: 2025/05/19 01:00:15 logger.go:31: TaskID: task2-http-get - Received completion notification. Success: true
+INFO: 2025/05/19 01:00:30 logger.go:31: TaskID: task2-http-get - Cron triggered for task
+INFO: 2025/05/19 01:00:30 logger.go:31: TaskID: task1-echo-schedule - Cron triggered for task
+INFO: 2025/05/19 01:00:30 logger.go:31: TaskID: task1-echo-schedule - Starting task execution
+INFO: 2025/05/19 01:00:30 logger.go:31: TaskID: task2-http-get - Starting task execution
+INFO: 2025/05/19 01:00:30 logger.go:31: TaskID: task1-echo-schedule - Execution Result - TaskID: task1-echo-schedule, Status: SUCCESS, Duration: 2.237904ms, Output: Привет от task1! Время: $(date)
+INFO: 2025/05/19 01:00:30 logger.go:31: TaskID: task1-echo-schedule - Received completion notification. Success: true
+INFO: 2025/05/19 01:00:30 logger.go:31: TaskID: task2-http-get - Execution Result - TaskID: task2-http-get, Status: SUCCESS, Duration: 176.862242ms, Output: {
+  "args": {
+    "param": "value"
+  }, 
+  "headers": {
+    "Accept-Encoding": "gzip", 
+    "Host": "httpbin.org", 
+    "User-Agent": "Go-http-client/2.0", 
+    "X-Amzn-Trace-Id": "Root=1-682a587e-701c2d7c30111e902a336f1a", 
+    "X-Custom-Header": "GoTaskManager"
+  }, 
+  "origin": "78.138.130.109", 
+  "url": "https://httpbin.org/get?param=value"
+}
+INFO: 2025/05/19 01:00:30 logger.go:31: TaskID: task2-http-get - Received completion notification. Success: true
+INFO: 2025/05/19 01:00:45 logger.go:31: TaskID: task2-http-get - Cron triggered for task
+INFO: 2025/05/19 01:00:45 logger.go:31: TaskID: task2-http-get - Starting task execution
+INFO: 2025/05/19 01:00:45 logger.go:31: TaskID: task2-http-get - Execution Result - TaskID: task2-http-get, Status: SUCCESS, Duration: 148.774994ms, Output: {
+  "args": {
+    "param": "value"
+  }, 
+  "headers": {
+    "Accept-Encoding": "gzip", 
+    "Host": "httpbin.org", 
+    "User-Agent": "Go-http-client/2.0", 
+    "X-Amzn-Trace-Id": "Root=1-682a588d-17d0b27012a0faf57a77a40f", 
+    "X-Custom-Header": "GoTaskManager"
+  }, 
+  "origin": "78.138.130.109", 
+  "url": "https://httpbin.org/get?param=value"
+}
+INFO: 2025/05/19 01:00:45 logger.go:31: TaskID: task2-http-get - Received completion notification. Success: true
+INFO: 2025/05/19 01:01:00 logger.go:31: TaskID: task1-echo-schedule - Cron triggered for task
+INFO: 2025/05/19 01:01:00 logger.go:31: TaskID: task1-echo-schedule - Starting task execution
+INFO: 2025/05/19 01:01:00 logger.go:31: TaskID: task2-http-get - Cron triggered for task
+INFO: 2025/05/19 01:01:00 logger.go:31: TaskID: task2-http-get - Starting task execution
+INFO: 2025/05/19 01:01:00 logger.go:31: TaskID: task1-echo-schedule - Execution Result - TaskID: task1-echo-schedule, Status: SUCCESS, Duration: 1.702649ms, Output: Привет от task1! Время: $(date)
+INFO: 2025/05/19 01:01:00 logger.go:31: TaskID: task1-echo-schedule - Received completion notification. Success: true
+INFO: 2025/05/19 01:01:00 logger.go:31: TaskID: task2-http-get - Execution Result - TaskID: task2-http-get, Status: SUCCESS, Duration: 181.497163ms, Output: {
+  "args": {
+    "param": "value"
+  }, 
+  "headers": {
+    "Accept-Encoding": "gzip", 
+    "Host": "httpbin.org", 
+    "User-Agent": "Go-http-client/2.0", 
+    "X-Amzn-Trace-Id": "Root=1-682a589c-698a82b373d7f2887c74f5e1", 
+    "X-Custom-Header": "GoTaskManager"
+  }, 
+  "origin": "78.138.130.109", 
+  "url": "https://httpbin.org/get?param=value"
+}
+INFO: 2025/05/19 01:01:00 logger.go:31: TaskID: task2-http-get - Received completion notification. Success: true
+INFO: 2025/05/19 01:01:06 logger.go:31: TaskID: SchedulerWatcher - Received fs event: WRITE         "/home/piligrim/Work/golang/gotask2/tasks/task1-echo-schedule.yml"
+INFO: 2025/05/19 01:01:06 logger.go:31: TaskID: SchedulerWatcher - Task file change detected: /home/piligrim/Work/golang/gotask2/tasks/task1-echo-schedule.yml. Reloading tasks.
+INFO: 2025/05/19 01:01:06 logger.go:31: TaskID: Scheduler - Handling task file change for: /home/piligrim/Work/golang/gotask2/tasks/task1-echo-schedule.yml
+INFO: 2025/05/19 01:01:06 logger.go:31: TaskID: Scheduler - Performing initial load and scheduling of tasks from directory: /home/piligrim/Work/golang/gotask2/tasks
+INFO: 2025/05/19 01:01:06 logger.go:31: TaskID: task2-http-get - Removed 1 old cron entries for task
+INFO: 2025/05/19 01:01:06 logger.go:31: TaskID: task2-http-get - Updating existing task definition in scheduler map
+INFO: 2025/05/19 01:01:06 logger.go:31: TaskID: task2-http-get - Task added/updated in scheduler's internal map from file /home/piligrim/Work/golang/gotask2/tasks/curl-test.yaml
+INFO: 2025/05/19 01:01:06 logger.go:31: TaskID: task2-http-get - Task scheduled with cron: */15 * * * * *, EntryID: 3
+INFO: 2025/05/19 01:01:06 logger.go:31: TaskID: task1-echo-schedule - Removed 1 old cron entries for task
+INFO: 2025/05/19 01:01:06 logger.go:31: TaskID: task1-echo-schedule - Updating existing task definition in scheduler map
+INFO: 2025/05/19 01:01:06 logger.go:31: TaskID: task1-echo-schedule - Task added/updated in scheduler's internal map from file /home/piligrim/Work/golang/gotask2/tasks/task1-echo-schedule.yml
+INFO: 2025/05/19 01:01:06 logger.go:31: TaskID: task1-echo-schedule - Task scheduled with cron: */15 * * * * *, EntryID: 4
+INFO: 2025/05/19 01:01:06 logger.go:31: TaskID: SchedulerWatcher - Received fs event: WRITE         "/home/piligrim/Work/golang/gotask2/tasks/task1-echo-schedule.yml"
+INFO: 2025/05/19 01:01:06 logger.go:31: TaskID: SchedulerWatcher - Task file change detected: /home/piligrim/Work/golang/gotask2/tasks/task1-echo-schedule.yml. Reloading tasks.
+INFO: 2025/05/19 01:01:06 logger.go:31: TaskID: Scheduler - Handling task file change for: /home/piligrim/Work/golang/gotask2/tasks/task1-echo-schedule.yml
+INFO: 2025/05/19 01:01:06 logger.go:31: TaskID: Scheduler - Performing initial load and scheduling of tasks from directory: /home/piligrim/Work/golang/gotask2/tasks
+INFO: 2025/05/19 01:01:06 logger.go:31: TaskID: task2-http-get - Removed 1 old cron entries for task
+INFO: 2025/05/19 01:01:06 logger.go:31: TaskID: task2-http-get - Updating existing task definition in scheduler map
+INFO: 2025/05/19 01:01:06 logger.go:31: TaskID: task2-http-get - Task added/updated in scheduler's internal map from file /home/piligrim/Work/golang/gotask2/tasks/curl-test.yaml
+INFO: 2025/05/19 01:01:06 logger.go:31: TaskID: task2-http-get - Task scheduled with cron: */15 * * * * *, EntryID: 5
+INFO: 2025/05/19 01:01:06 logger.go:31: TaskID: task1-echo-schedule - Removed 1 old cron entries for task
+INFO: 2025/05/19 01:01:06 logger.go:31: TaskID: task1-echo-schedule - Updating existing task definition in scheduler map
+INFO: 2025/05/19 01:01:06 logger.go:31: TaskID: task1-echo-schedule - Task added/updated in scheduler's internal map from file /home/piligrim/Work/golang/gotask2/tasks/task1-echo-schedule.yml
+INFO: 2025/05/19 01:01:06 logger.go:31: TaskID: task1-echo-schedule - Task scheduled with cron: */15 * * * * *, EntryID: 6
+INFO: 2025/05/19 01:01:15 logger.go:31: TaskID: task1-echo-schedule - Cron triggered for task
+INFO: 2025/05/19 01:01:15 logger.go:31: TaskID: task1-echo-schedule - Starting task execution
+INFO: 2025/05/19 01:01:15 logger.go:31: TaskID: task2-http-get - Cron triggered for task
+INFO: 2025/05/19 01:01:15 logger.go:31: TaskID: task2-http-get - Starting task execution
+INFO: 2025/05/19 01:01:15 logger.go:31: TaskID: task1-echo-schedule - Execution Result - TaskID: task1-echo-schedule, Status: SUCCESS, Duration: 2.78332ms, Output: Привет от task1! Время: $(date)
+INFO: 2025/05/19 01:01:15 logger.go:31: TaskID: task1-echo-schedule - Received completion notification. Success: true
+INFO: 2025/05/19 01:01:15 logger.go:31: TaskID: task2-http-get - Execution Result - TaskID: task2-http-get, Status: SUCCESS, Duration: 226.8622ms, Output: {
+  "args": {
+    "param": "value"
+  }, 
+  "headers": {
+    "Accept-Encoding": "gzip", 
+    "Host": "httpbin.org", 
+    "User-Agent": "Go-http-client/2.0", 
+    "X-Amzn-Trace-Id": "Root=1-682a58ab-0cafddff0041e82a3b5dae35", 
+    "X-Custom-Header": "GoTaskManager"
+  }, 
+  "origin": "78.138.130.109", 
+  "url": "https://httpbin.org/get?param=value"
+}
+INFO: 2025/05/19 01:01:15 logger.go:31: TaskID: task2-http-get - Received completion notification. Success: true
+INFO: 2025/05/19 01:01:16 logger.go:31: TaskID: SchedulerWatcher - Received fs event: WRITE         "/home/piligrim/Work/golang/gotask2/tasks/curl-test.yaml"
+INFO: 2025/05/19 01:01:16 logger.go:31: TaskID: SchedulerWatcher - Task file change detected: /home/piligrim/Work/golang/gotask2/tasks/curl-test.yaml. Reloading tasks.
+INFO: 2025/05/19 01:01:16 logger.go:31: TaskID: Scheduler - Handling task file change for: /home/piligrim/Work/golang/gotask2/tasks/curl-test.yaml
+INFO: 2025/05/19 01:01:16 logger.go:31: TaskID: Scheduler - Performing initial load and scheduling of tasks from directory: /home/piligrim/Work/golang/gotask2/tasks
+INFO: 2025/05/19 01:01:16 logger.go:31: TaskID: task2-http-get - Removed 1 old cron entries for task
+INFO: 2025/05/19 01:01:16 logger.go:31: TaskID: task2-http-get - Updating existing task definition in scheduler map
+INFO: 2025/05/19 01:01:16 logger.go:31: TaskID: task2-http-get - Task added/updated in scheduler's internal map from file /home/piligrim/Work/golang/gotask2/tasks/curl-test.yaml
+INFO: 2025/05/19 01:01:16 logger.go:31: TaskID: task2-http-get - Task scheduled with cron: 0 * * * * *, EntryID: 7
+INFO: 2025/05/19 01:01:16 logger.go:31: TaskID: task1-echo-schedule - Removed 1 old cron entries for task
+INFO: 2025/05/19 01:01:16 logger.go:31: TaskID: task1-echo-schedule - Updating existing task definition in scheduler map
+INFO: 2025/05/19 01:01:16 logger.go:31: TaskID: task1-echo-schedule - Task added/updated in scheduler's internal map from file /home/piligrim/Work/golang/gotask2/tasks/task1-echo-schedule.yml
+INFO: 2025/05/19 01:01:16 logger.go:31: TaskID: task1-echo-schedule - Task scheduled with cron: */15 * * * * *, EntryID: 8
+INFO: 2025/05/19 01:01:16 logger.go:31: TaskID: SchedulerWatcher - Received fs event: WRITE         "/home/piligrim/Work/golang/gotask2/tasks/curl-test.yaml"
+INFO: 2025/05/19 01:01:16 logger.go:31: TaskID: SchedulerWatcher - Task file change detected: /home/piligrim/Work/golang/gotask2/tasks/curl-test.yaml. Reloading tasks.
+INFO: 2025/05/19 01:01:16 logger.go:31: TaskID: Scheduler - Handling task file change for: /home/piligrim/Work/golang/gotask2/tasks/curl-test.yaml
+INFO: 2025/05/19 01:01:16 logger.go:31: TaskID: Scheduler - Performing initial load and scheduling of tasks from directory: /home/piligrim/Work/golang/gotask2/tasks
+INFO: 2025/05/19 01:01:16 logger.go:31: TaskID: task2-http-get - Removed 1 old cron entries for task
+INFO: 2025/05/19 01:01:16 logger.go:31: TaskID: task2-http-get - Updating existing task definition in scheduler map
+INFO: 2025/05/19 01:01:16 logger.go:31: TaskID: task2-http-get - Task added/updated in scheduler's internal map from file /home/piligrim/Work/golang/gotask2/tasks/curl-test.yaml
+INFO: 2025/05/19 01:01:16 logger.go:31: TaskID: task2-http-get - Task scheduled with cron: 0 * * * * *, EntryID: 9
+INFO: 2025/05/19 01:01:16 logger.go:31: TaskID: task1-echo-schedule - Removed 1 old cron entries for task
+INFO: 2025/05/19 01:01:16 logger.go:31: TaskID: task1-echo-schedule - Updating existing task definition in scheduler map
+INFO: 2025/05/19 01:01:16 logger.go:31: TaskID: task1-echo-schedule - Task added/updated in scheduler's internal map from file /home/piligrim/Work/golang/gotask2/tasks/task1-echo-schedule.yml
+INFO: 2025/05/19 01:01:16 logger.go:31: TaskID: task1-echo-schedule - Task scheduled with cron: */15 * * * * *, EntryID: 10
+INFO: 2025/05/19 01:01:16 logger.go:31: TaskID: SchedulerWatcher - Received fs event: WRITE         "/home/piligrim/Work/golang/gotask2/tasks/curl-test.yaml"
+INFO: 2025/05/19 01:01:16 logger.go:31: TaskID: SchedulerWatcher - Task file change detected: /home/piligrim/Work/golang/gotask2/tasks/curl-test.yaml. Reloading tasks.
+INFO: 2025/05/19 01:01:16 logger.go:31: TaskID: Scheduler - Handling task file change for: /home/piligrim/Work/golang/gotask2/tasks/curl-test.yaml
+INFO: 2025/05/19 01:01:16 logger.go:31: TaskID: Scheduler - Performing initial load and scheduling of tasks from directory: /home/piligrim/Work/golang/gotask2/tasks
+INFO: 2025/05/19 01:01:16 logger.go:31: TaskID: task2-http-get - Removed 1 old cron entries for task
+INFO: 2025/05/19 01:01:16 logger.go:31: TaskID: task2-http-get - Updating existing task definition in scheduler map
+INFO: 2025/05/19 01:01:16 logger.go:31: TaskID: task2-http-get - Task added/updated in scheduler's internal map from file /home/piligrim/Work/golang/gotask2/tasks/curl-test.yaml
+INFO: 2025/05/19 01:01:16 logger.go:31: TaskID: task2-http-get - Task scheduled with cron: 0 * * * * *, EntryID: 11
+INFO: 2025/05/19 01:01:16 logger.go:31: TaskID: task1-echo-schedule - Removed 1 old cron entries for task
+INFO: 2025/05/19 01:01:16 logger.go:31: TaskID: task1-echo-schedule - Updating existing task definition in scheduler map
+INFO: 2025/05/19 01:01:16 logger.go:31: TaskID: task1-echo-schedule - Task added/updated in scheduler's internal map from file /home/piligrim/Work/golang/gotask2/tasks/task1-echo-schedule.yml
+INFO: 2025/05/19 01:01:16 logger.go:31: TaskID: task1-echo-schedule - Task scheduled with cron: */15 * * * * *, EntryID: 12
+INFO: 2025/05/19 01:01:16 logger.go:31: TaskID: SchedulerWatcher - Received fs event: WRITE         "/home/piligrim/Work/golang/gotask2/tasks/curl-test.yaml"
+INFO: 2025/05/19 01:01:16 logger.go:31: TaskID: SchedulerWatcher - Task file change detected: /home/piligrim/Work/golang/gotask2/tasks/curl-test.yaml. Reloading tasks.
+INFO: 2025/05/19 01:01:16 logger.go:31: TaskID: Scheduler - Handling task file change for: /home/piligrim/Work/golang/gotask2/tasks/curl-test.yaml
+INFO: 2025/05/19 01:01:16 logger.go:31: TaskID: Scheduler - Performing initial load and scheduling of tasks from directory: /home/piligrim/Work/golang/gotask2/tasks
+INFO: 2025/05/19 01:01:16 logger.go:31: TaskID: task2-http-get - Removed 1 old cron entries for task
+INFO: 2025/05/19 01:01:16 logger.go:31: TaskID: task2-http-get - Updating existing task definition in scheduler map
+INFO: 2025/05/19 01:01:16 logger.go:31: TaskID: task2-http-get - Task added/updated in scheduler's internal map from file /home/piligrim/Work/golang/gotask2/tasks/curl-test.yaml
+INFO: 2025/05/19 01:01:16 logger.go:31: TaskID: task2-http-get - Task scheduled with cron: 0 * * * * *, EntryID: 13
+INFO: 2025/05/19 01:01:16 logger.go:31: TaskID: task1-echo-schedule - Removed 1 old cron entries for task
+INFO: 2025/05/19 01:01:16 logger.go:31: TaskID: task1-echo-schedule - Updating existing task definition in scheduler map
+INFO: 2025/05/19 01:01:16 logger.go:31: TaskID: task1-echo-schedule - Task added/updated in scheduler's internal map from file /home/piligrim/Work/golang/gotask2/tasks/task1-echo-schedule.yml
+INFO: 2025/05/19 01:01:16 logger.go:31: TaskID: task1-echo-schedule - Task scheduled with cron: */15 * * * * *, EntryID: 14
+INFO: 2025/05/19 01:01:17 logger.go:31: TaskID: SchedulerWatcher - Received fs event: WRITE         "/home/piligrim/Work/golang/gotask2/tasks/curl-test.yaml"
+INFO: 2025/05/19 01:01:17 logger.go:31: TaskID: SchedulerWatcher - Task file change detected: /home/piligrim/Work/golang/gotask2/tasks/curl-test.yaml. Reloading tasks.
+INFO: 2025/05/19 01:01:17 logger.go:31: TaskID: Scheduler - Handling task file change for: /home/piligrim/Work/golang/gotask2/tasks/curl-test.yaml
+INFO: 2025/05/19 01:01:17 logger.go:31: TaskID: Scheduler - Performing initial load and scheduling of tasks from directory: /home/piligrim/Work/golang/gotask2/tasks
+INFO: 2025/05/19 01:01:17 logger.go:31: TaskID: task2-http-get - Removed 1 old cron entries for task
+INFO: 2025/05/19 01:01:17 logger.go:31: TaskID: task2-http-get - Updating existing task definition in scheduler map
+INFO: 2025/05/19 01:01:17 logger.go:31: TaskID: task2-http-get - Task added/updated in scheduler's internal map from file /home/piligrim/Work/golang/gotask2/tasks/curl-test.yaml
+INFO: 2025/05/19 01:01:17 logger.go:31: TaskID: task2-http-get - Task scheduled with cron: 0 * * * * *, EntryID: 15
+INFO: 2025/05/19 01:01:17 logger.go:31: TaskID: task1-echo-schedule - Removed 1 old cron entries for task
+INFO: 2025/05/19 01:01:17 logger.go:31: TaskID: task1-echo-schedule - Updating existing task definition in scheduler map
+INFO: 2025/05/19 01:01:17 logger.go:31: TaskID: task1-echo-schedule - Task added/updated in scheduler's internal map from file /home/piligrim/Work/golang/gotask2/tasks/task1-echo-schedule.yml
+INFO: 2025/05/19 01:01:17 logger.go:31: TaskID: task1-echo-schedule - Task scheduled with cron: */15 * * * * *, EntryID: 16
+INFO: 2025/05/19 01:01:17 logger.go:31: TaskID: SchedulerWatcher - Received fs event: WRITE         "/home/piligrim/Work/golang/gotask2/tasks/curl-test.yaml"
+INFO: 2025/05/19 01:01:17 logger.go:31: TaskID: SchedulerWatcher - Task file change detected: /home/piligrim/Work/golang/gotask2/tasks/curl-test.yaml. Reloading tasks.
+INFO: 2025/05/19 01:01:17 logger.go:31: TaskID: Scheduler - Handling task file change for: /home/piligrim/Work/golang/gotask2/tasks/curl-test.yaml
+INFO: 2025/05/19 01:01:17 logger.go:31: TaskID: Scheduler - Performing initial load and scheduling of tasks from directory: /home/piligrim/Work/golang/gotask2/tasks
+INFO: 2025/05/19 01:01:17 logger.go:31: TaskID: task2-http-get - Removed 1 old cron entries for task
+INFO: 2025/05/19 01:01:17 logger.go:31: TaskID: task2-http-get - Updating existing task definition in scheduler map
+INFO: 2025/05/19 01:01:17 logger.go:31: TaskID: task2-http-get - Task added/updated in scheduler's internal map from file /home/piligrim/Work/golang/gotask2/tasks/curl-test.yaml
+INFO: 2025/05/19 01:01:17 logger.go:31: TaskID: task2-http-get - Task scheduled with cron: 0 * * * * *, EntryID: 17
+INFO: 2025/05/19 01:01:17 logger.go:31: TaskID: task1-echo-schedule - Removed 1 old cron entries for task
+INFO: 2025/05/19 01:01:17 logger.go:31: TaskID: task1-echo-schedule - Updating existing task definition in scheduler map
+INFO: 2025/05/19 01:01:17 logger.go:31: TaskID: task1-echo-schedule - Task added/updated in scheduler's internal map from file /home/piligrim/Work/golang/gotask2/tasks/task1-echo-schedule.yml
+INFO: 2025/05/19 01:01:17 logger.go:31: TaskID: task1-echo-schedule - Task scheduled with cron: */15 * * * * *, EntryID: 18
+INFO: 2025/05/19 01:01:30 logger.go:31: TaskID: task1-echo-schedule - Cron triggered for task
+INFO: 2025/05/19 01:01:30 logger.go:31: TaskID: task1-echo-schedule - Starting task execution
+INFO: 2025/05/19 01:01:30 logger.go:31: TaskID: task1-echo-schedule - Execution Result - TaskID: task1-echo-schedule, Status: SUCCESS, Duration: 1.727346ms, Output: Привет от task1! Время: $(date)
+INFO: 2025/05/19 01:01:30 logger.go:31: TaskID: task1-echo-schedule - Received completion notification. Success: true
+INFO: 2025/05/19 01:01:45 logger.go:31: TaskID: task1-echo-schedule - Cron triggered for task
+INFO: 2025/05/19 01:01:45 logger.go:31: TaskID: task1-echo-schedule - Starting task execution
+INFO: 2025/05/19 01:01:45 logger.go:31: TaskID: task1-echo-schedule - Execution Result - TaskID: task1-echo-schedule, Status: SUCCESS, Duration: 2.611214ms, Output: Привет от task1! Время: $(date)
+INFO: 2025/05/19 01:01:45 logger.go:31: TaskID: task1-echo-schedule - Received completion notification. Success: true
+INFO: 2025/05/19 01:01:46 logger.go:31: TaskID: SchedulerWatcher - Received fs event: WRITE         "/home/piligrim/Work/golang/gotask2/tasks/task1-echo-schedule.yml"
+INFO: 2025/05/19 01:01:46 logger.go:31: TaskID: SchedulerWatcher - Task file change detected: /home/piligrim/Work/golang/gotask2/tasks/task1-echo-schedule.yml. Reloading tasks.
+INFO: 2025/05/19 01:01:46 logger.go:31: TaskID: Scheduler - Handling task file change for: /home/piligrim/Work/golang/gotask2/tasks/task1-echo-schedule.yml
+INFO: 2025/05/19 01:01:46 logger.go:31: TaskID: Scheduler - Performing initial load and scheduling of tasks from directory: /home/piligrim/Work/golang/gotask2/tasks
+INFO: 2025/05/19 01:01:46 logger.go:31: TaskID: task2-http-get - Removed 1 old cron entries for task
+INFO: 2025/05/19 01:01:46 logger.go:31: TaskID: task2-http-get - Updating existing task definition in scheduler map
+INFO: 2025/05/19 01:01:46 logger.go:31: TaskID: task2-http-get - Task added/updated in scheduler's internal map from file /home/piligrim/Work/golang/gotask2/tasks/curl-test.yaml
+INFO: 2025/05/19 01:01:46 logger.go:31: TaskID: task2-http-get - Task scheduled with cron: 0 * * * * *, EntryID: 19
+INFO: 2025/05/19 01:01:46 logger.go:31: TaskID: task1-echo-schedule - Removed 1 old cron entries for task
+INFO: 2025/05/19 01:01:46 logger.go:31: TaskID: task1-echo-schedule - Updating existing task definition in scheduler map
+INFO: 2025/05/19 01:01:46 logger.go:31: TaskID: task1-echo-schedule - Task added/updated in scheduler's internal map from file /home/piligrim/Work/golang/gotask2/tasks/task1-echo-schedule.yml
+INFO: 2025/05/19 01:01:46 logger.go:31: TaskID: task1-echo-schedule - Task scheduled with cron: */15 * * * * *, EntryID: 20
+INFO: 2025/05/19 01:01:46 logger.go:31: TaskID: SchedulerWatcher - Received fs event: WRITE         "/home/piligrim/Work/golang/gotask2/tasks/task1-echo-schedule.yml"
+INFO: 2025/05/19 01:01:46 logger.go:31: TaskID: SchedulerWatcher - Task file change detected: /home/piligrim/Work/golang/gotask2/tasks/task1-echo-schedule.yml. Reloading tasks.
+INFO: 2025/05/19 01:01:46 logger.go:31: TaskID: Scheduler - Handling task file change for: /home/piligrim/Work/golang/gotask2/tasks/task1-echo-schedule.yml
+INFO: 2025/05/19 01:01:46 logger.go:31: TaskID: Scheduler - Performing initial load and scheduling of tasks from directory: /home/piligrim/Work/golang/gotask2/tasks
+INFO: 2025/05/19 01:01:46 logger.go:31: TaskID: task2-http-get - Removed 1 old cron entries for task
+INFO: 2025/05/19 01:01:46 logger.go:31: TaskID: task2-http-get - Updating existing task definition in scheduler map
+INFO: 2025/05/19 01:01:46 logger.go:31: TaskID: task2-http-get - Task added/updated in scheduler's internal map from file /home/piligrim/Work/golang/gotask2/tasks/curl-test.yaml
+INFO: 2025/05/19 01:01:46 logger.go:31: TaskID: task2-http-get - Task scheduled with cron: 0 * * * * *, EntryID: 21
+INFO: 2025/05/19 01:01:46 logger.go:31: TaskID: task1-echo-schedule - Removed 1 old cron entries for task
+INFO: 2025/05/19 01:01:46 logger.go:31: TaskID: task1-echo-schedule - Updating existing task definition in scheduler map
+INFO: 2025/05/19 01:01:46 logger.go:31: TaskID: task1-echo-schedule - Task added/updated in scheduler's internal map from file /home/piligrim/Work/golang/gotask2/tasks/task1-echo-schedule.yml
+INFO: 2025/05/19 01:01:46 logger.go:31: TaskID: task1-echo-schedule - Task scheduled with cron: */15 * * * * *, EntryID: 22
+INFO: 2025/05/19 01:02:00 logger.go:31: TaskID: task1-echo-schedule - Cron triggered for task
+INFO: 2025/05/19 01:02:00 logger.go:31: TaskID: task1-echo-schedule - Starting task execution
+INFO: 2025/05/19 01:02:00 logger.go:31: TaskID: task2-http-get - Cron triggered for task
+INFO: 2025/05/19 01:02:00 logger.go:31: TaskID: task2-http-get - Starting task execution
+INFO: 2025/05/19 01:02:00 logger.go:31: TaskID: task1-echo-schedule - Execution Result - TaskID: task1-echo-schedule, Status: SUCCESS, Duration: 1.614281ms, Output: Привет от task1! Время: $(date)
+INFO: 2025/05/19 01:02:00 logger.go:31: TaskID: task1-echo-schedule - Received completion notification. Success: true
+INFO: 2025/05/19 01:02:00 logger.go:31: TaskID: task2-http-get - Execution Result - TaskID: task2-http-get, Status: SUCCESS, Duration: 612.82792ms, Output: {
+  "args": {
+    "param": "value"
+  }, 
+  "headers": {
+    "Accept-Encoding": "gzip", 
+    "Host": "httpbin.org", 
+    "User-Agent": "Go-http-client/2.0", 
+    "X-Amzn-Trace-Id": "Root=1-682a58d8-6f9f28156c5f4d34474c3354", 
+    "X-Custom-Header": "GoTaskManager"
+  }, 
+  "origin": "78.138.130.109", 
+  "url": "https://httpbin.org/get?param=value"
+}
+INFO: 2025/05/19 01:02:00 logger.go:31: TaskID: task2-http-get - Received completion notification. Success: true
+INFO: 2025/05/19 01:02:15 logger.go:31: TaskID: task1-echo-schedule - Cron triggered for task
+INFO: 2025/05/19 01:02:15 logger.go:31: TaskID: task1-echo-schedule - Starting task execution
+INFO: 2025/05/19 01:02:15 logger.go:31: TaskID: task1-echo-schedule - Execution Result - TaskID: task1-echo-schedule, Status: SUCCESS, Duration: 1.515305ms, Output: Привет от task1! Время: $(date)
+INFO: 2025/05/19 01:02:15 logger.go:31: TaskID: task1-echo-schedule - Received completion notification. Success: true
+INFO: 2025/05/19 01:02:30 logger.go:31: TaskID: task1-echo-schedule - Cron triggered for task
+INFO: 2025/05/19 01:02:30 logger.go:31: TaskID: task1-echo-schedule - Starting task execution
+INFO: 2025/05/19 01:02:30 logger.go:31: TaskID: task1-echo-schedule - Execution Result - TaskID: task1-echo-schedule, Status: SUCCESS, Duration: 1.979773ms, Output: Привет от task1! Время: $(date)
+INFO: 2025/05/19 01:02:30 logger.go:31: TaskID: task1-echo-schedule - Received completion notification. Success: true
+INFO: 2025/05/19 01:02:45 logger.go:31: TaskID: task1-echo-schedule - Cron triggered for task
+INFO: 2025/05/19 01:02:45 logger.go:31: TaskID: task1-echo-schedule - Starting task execution
+INFO: 2025/05/19 01:02:45 logger.go:31: TaskID: task1-echo-schedule - Execution Result - TaskID: task1-echo-schedule, Status: SUCCESS, Duration: 1.75708ms, Output: Привет от task1! Время: $(date)
+INFO: 2025/05/19 01:02:45 logger.go:31: TaskID: task1-echo-schedule - Received completion notification. Success: true
+INFO: 2025/05/19 01:03:00 logger.go:31: TaskID: task2-http-get - Cron triggered for task
+INFO: 2025/05/19 01:03:00 logger.go:31: TaskID: task1-echo-schedule - Cron triggered for task
+INFO: 2025/05/19 01:03:00 logger.go:31: TaskID: task1-echo-schedule - Starting task execution
+INFO: 2025/05/19 01:03:00 logger.go:31: TaskID: task2-http-get - Starting task execution
+INFO: 2025/05/19 01:03:00 logger.go:31: TaskID: task1-echo-schedule - Execution Result - TaskID: task1-echo-schedule, Status: SUCCESS, Duration: 1.811106ms, Output: Привет от task1! Время: $(date)
+INFO: 2025/05/19 01:03:00 logger.go:31: TaskID: task1-echo-schedule - Received completion notification. Success: true
+INFO: 2025/05/19 01:03:00 logger.go:31: TaskID: task2-http-get - Execution Result - TaskID: task2-http-get, Status: SUCCESS, Duration: 142.076064ms, Output: {
+  "args": {
+    "param": "value"
+  }, 
+  "headers": {
+    "Accept-Encoding": "gzip", 
+    "Host": "httpbin.org", 
+    "User-Agent": "Go-http-client/2.0", 
+    "X-Amzn-Trace-Id": "Root=1-682a5914-46b2f9166feaa95d55940ebb", 
+    "X-Custom-Header": "GoTaskManager"
+  }, 
+  "origin": "78.138.130.109", 
+  "url": "https://httpbin.org/get?param=value"
+}
+INFO: 2025/05/19 01:03:00 logger.go:31: TaskID: task2-http-get - Received completion notification. Success: true
+INFO: 2025/05/19 01:03:15 logger.go:31: TaskID: task1-echo-schedule - Cron triggered for task
+INFO: 2025/05/19 01:03:15 logger.go:31: TaskID: task1-echo-schedule - Starting task execution
+INFO: 2025/05/19 01:03:15 logger.go:31: TaskID: task1-echo-schedule - Execution Result - TaskID: task1-echo-schedule, Status: SUCCESS, Duration: 995.615µs, Output: Привет от task1! Время: $(date)
+INFO: 2025/05/19 01:03:15 logger.go:31: TaskID: task1-echo-schedule - Received completion notification. Success: true
+INFO: 2025/05/19 01:03:30 logger.go:31: TaskID: task1-echo-schedule - Cron triggered for task
+INFO: 2025/05/19 01:03:30 logger.go:31: TaskID: task1-echo-schedule - Starting task execution
+INFO: 2025/05/19 01:03:30 logger.go:31: TaskID: task1-echo-schedule - Execution Result - TaskID: task1-echo-schedule, Status: SUCCESS, Duration: 1.198205ms, Output: Привет от task1! Время: $(date)
+INFO: 2025/05/19 01:03:30 logger.go:31: TaskID: task1-echo-schedule - Received completion notification. Success: true
+INFO: 2025/05/19 01:03:45 logger.go:31: TaskID: task1-echo-schedule - Cron triggered for task
+INFO: 2025/05/19 01:03:45 logger.go:31: TaskID: task1-echo-schedule - Starting task execution
+INFO: 2025/05/19 01:03:45 logger.go:31: TaskID: task1-echo-schedule - Execution Result - TaskID: task1-echo-schedule, Status: SUCCESS, Duration: 2.144361ms, Output: Привет от task1! Время: $(date)
+INFO: 2025/05/19 01:03:45 logger.go:31: TaskID: task1-echo-schedule - Received completion notification. Success: true
+INFO: 2025/05/19 01:04:00 logger.go:31: TaskID: task2-http-get - Cron triggered for task
+INFO: 2025/05/19 01:04:00 logger.go:31: TaskID: task2-http-get - Starting task execution
+INFO: 2025/05/19 01:04:00 logger.go:31: TaskID: task1-echo-schedule - Cron triggered for task
+INFO: 2025/05/19 01:04:00 logger.go:31: TaskID: task1-echo-schedule - Starting task execution
+INFO: 2025/05/19 01:04:00 logger.go:31: TaskID: task1-echo-schedule - Execution Result - TaskID: task1-echo-schedule, Status: SUCCESS, Duration: 2.463974ms, Output: Привет от task1! Время: $(date)
+INFO: 2025/05/19 01:04:00 logger.go:31: TaskID: task1-echo-schedule - Received completion notification. Success: true
+INFO: 2025/05/19 01:04:00 logger.go:31: TaskID: task2-http-get - Execution Result - TaskID: task2-http-get, Status: SUCCESS, Duration: 803.241401ms, Output: {
+  "args": {
+    "param": "value"
+  }, 
+  "headers": {
+    "Accept-Encoding": "gzip", 
+    "Host": "httpbin.org", 
+    "User-Agent": "Go-http-client/2.0", 
+    "X-Amzn-Trace-Id": "Root=1-682a5950-27d24cc251c49b4c70114a6d", 
+    "X-Custom-Header": "GoTaskManager"
+  }, 
+  "origin": "78.138.130.109", 
+  "url": "https://httpbin.org/get?param=value"
+}
+INFO: 2025/05/19 01:04:00 logger.go:31: TaskID: task2-http-get - Received completion notification. Success: true
+INFO: 2025/05/19 01:04:15 logger.go:31: TaskID: task1-echo-schedule - Cron triggered for task
+INFO: 2025/05/19 01:04:15 logger.go:31: TaskID: task1-echo-schedule - Starting task execution
+INFO: 2025/05/19 01:04:15 logger.go:31: TaskID: task1-echo-schedule - Execution Result - TaskID: task1-echo-schedule, Status: SUCCESS, Duration: 948.194µs, Output: Привет от task1! Время: $(date)
+INFO: 2025/05/19 01:04:15 logger.go:31: TaskID: task1-echo-schedule - Received completion notification. Success: true
+INFO: 2025/05/19 01:04:30 logger.go:31: TaskID: task1-echo-schedule - Cron triggered for task
+INFO: 2025/05/19 01:04:30 logger.go:31: TaskID: task1-echo-schedule - Starting task execution
+INFO: 2025/05/19 01:04:30 logger.go:31: TaskID: task1-echo-schedule - Execution Result - TaskID: task1-echo-schedule, Status: SUCCESS, Duration: 1.833445ms, Output: Привет от task1! Время: $(date)
+INFO: 2025/05/19 01:04:30 logger.go:31: TaskID: task1-echo-schedule - Received completion notification. Success: true
+INFO: 2025/05/19 01:04:45 logger.go:31: TaskID: task1-echo-schedule - Cron triggered for task
+INFO: 2025/05/19 01:04:45 logger.go:31: TaskID: task1-echo-schedule - Starting task execution
+INFO: 2025/05/19 01:04:45 logger.go:31: TaskID: task1-echo-schedule - Execution Result - TaskID: task1-echo-schedule, Status: SUCCESS, Duration: 2.267582ms, Output: Привет от task1! Время: $(date)
+INFO: 2025/05/19 01:04:45 logger.go:31: TaskID: task1-echo-schedule - Received completion notification. Success: true
+INFO: 2025/05/19 01:05:00 logger.go:31: TaskID: task2-http-get - Cron triggered for task
+INFO: 2025/05/19 01:05:00 logger.go:31: TaskID: task1-echo-schedule - Cron triggered for task
+INFO: 2025/05/19 01:05:00 logger.go:31: TaskID: task1-echo-schedule - Starting task execution
+INFO: 2025/05/19 01:05:00 logger.go:31: TaskID: task2-http-get - Starting task execution
+INFO: 2025/05/19 01:05:00 logger.go:31: TaskID: task1-echo-schedule - Execution Result - TaskID: task1-echo-schedule, Status: SUCCESS, Duration: 1.914777ms, Output: Привет от task1! Время: $(date)
+INFO: 2025/05/19 01:05:00 logger.go:31: TaskID: task1-echo-schedule - Received completion notification. Success: true
+INFO: 2025/05/19 01:05:00 logger.go:31: TaskID: task2-http-get - Execution Result - TaskID: task2-http-get, Status: SUCCESS, Duration: 150.530447ms, Output: {
+  "args": {
+    "param": "value"
+  }, 
+  "headers": {
+    "Accept-Encoding": "gzip", 
+    "Host": "httpbin.org", 
+    "User-Agent": "Go-http-client/2.0", 
+    "X-Amzn-Trace-Id": "Root=1-682a598c-514e5e9f2c1bde1607473d38", 
+    "X-Custom-Header": "GoTaskManager"
+  }, 
+  "origin": "78.138.130.109", 
+  "url": "https://httpbin.org/get?param=value"
+}
+INFO: 2025/05/19 01:05:00 logger.go:31: TaskID: task2-http-get - Received completion notification. Success: true
+INFO: 2025/05/19 01:05:15 logger.go:31: TaskID: task1-echo-schedule - Cron triggered for task
+INFO: 2025/05/19 01:05:15 logger.go:31: TaskID: task1-echo-schedule - Starting task execution
+INFO: 2025/05/19 01:05:15 logger.go:31: TaskID: task1-echo-schedule - Execution Result - TaskID: task1-echo-schedule, Status: SUCCESS, Duration: 1.727021ms, Output: Привет от task1! Время: $(date)
+INFO: 2025/05/19 01:05:15 logger.go:31: TaskID: task1-echo-schedule - Received completion notification. Success: true
+INFO: 2025/05/19 01:05:30 logger.go:31: TaskID: task1-echo-schedule - Cron triggered for task
+INFO: 2025/05/19 01:05:30 logger.go:31: TaskID: task1-echo-schedule - Starting task execution
+INFO: 2025/05/19 01:05:30 logger.go:31: TaskID: task1-echo-schedule - Execution Result - TaskID: task1-echo-schedule, Status: SUCCESS, Duration: 1.17724ms, Output: Привет от task1! Время: $(date)
+INFO: 2025/05/19 01:05:30 logger.go:31: TaskID: task1-echo-schedule - Received completion notification. Success: true
+INFO: 2025/05/19 01:05:45 logger.go:31: TaskID: task1-echo-schedule - Cron triggered for task
+INFO: 2025/05/19 01:05:45 logger.go:31: TaskID: task1-echo-schedule - Starting task execution
+INFO: 2025/05/19 01:05:45 logger.go:31: TaskID: task1-echo-schedule - Execution Result - TaskID: task1-echo-schedule, Status: SUCCESS, Duration: 2.005862ms, Output: Привет от task1! Время: $(date)
+INFO: 2025/05/19 01:05:45 logger.go:31: TaskID: task1-echo-schedule - Received completion notification. Success: true
+INFO: 2025/05/19 01:06:00 logger.go:31: TaskID: task1-echo-schedule - Cron triggered for task
+INFO: 2025/05/19 01:06:00 logger.go:31: TaskID: task1-echo-schedule - Starting task execution
+INFO: 2025/05/19 01:06:00 logger.go:31: TaskID: task2-http-get - Cron triggered for task
+INFO: 2025/05/19 01:06:00 logger.go:31: TaskID: task2-http-get - Starting task execution
+INFO: 2025/05/19 01:06:00 logger.go:31: TaskID: task1-echo-schedule - Execution Result - TaskID: task1-echo-schedule, Status: SUCCESS, Duration: 1.574819ms, Output: Привет от task1! Время: $(date)
+INFO: 2025/05/19 01:06:00 logger.go:31: TaskID: task1-echo-schedule - Received completion notification. Success: true
+INFO: 2025/05/19 01:06:00 logger.go:31: TaskID: task2-http-get - Execution Result - TaskID: task2-http-get, Status: SUCCESS, Duration: 203.560139ms, Output: {
+  "args": {
+    "param": "value"
+  }, 
+  "headers": {
+    "Accept-Encoding": "gzip", 
+    "Host": "httpbin.org", 
+    "User-Agent": "Go-http-client/2.0", 
+    "X-Amzn-Trace-Id": "Root=1-682a59c8-15aeeb1e2f06b203591d82a6", 
+    "X-Custom-Header": "GoTaskManager"
+  }, 
+  "origin": "78.138.130.109", 
+  "url": "https://httpbin.org/get?param=value"
+}
+INFO: 2025/05/19 01:06:00 logger.go:31: TaskID: task2-http-get - Received completion notification. Success: true
+INFO: 2025/05/19 01:06:15 logger.go:31: TaskID: task1-echo-schedule - Cron triggered for task
+INFO: 2025/05/19 01:06:15 logger.go:31: TaskID: task1-echo-schedule - Starting task execution
+INFO: 2025/05/19 01:06:15 logger.go:31: TaskID: task1-echo-schedule - Execution Result - TaskID: task1-echo-schedule, Status: SUCCESS, Duration: 2.248604ms, Output: Привет от task1! Время: $(date)
+INFO: 2025/05/19 01:06:15 logger.go:31: TaskID: task1-echo-schedule - Received completion notification. Success: true
+INFO: 2025/05/19 01:06:30 logger.go:31: TaskID: task1-echo-schedule - Cron triggered for task
+INFO: 2025/05/19 01:06:30 logger.go:31: TaskID: task1-echo-schedule - Starting task execution
+INFO: 2025/05/19 01:06:30 logger.go:31: TaskID: task1-echo-schedule - Execution Result - TaskID: task1-echo-schedule, Status: SUCCESS, Duration: 1.975589ms, Output: Привет от task1! Время: $(date)
+INFO: 2025/05/19 01:06:30 logger.go:31: TaskID: task1-echo-schedule - Received completion notification. Success: true
+INFO: 2025/05/19 01:06:45 logger.go:31: TaskID: task1-echo-schedule - Cron triggered for task
+INFO: 2025/05/19 01:06:45 logger.go:31: TaskID: task1-echo-schedule - Starting task execution
+INFO: 2025/05/19 01:06:45 logger.go:31: TaskID: task1-echo-schedule - Execution Result - TaskID: task1-echo-schedule, Status: SUCCESS, Duration: 2.196879ms, Output: Привет от task1! Время: $(date)
+INFO: 2025/05/19 01:06:45 logger.go:31: TaskID: task1-echo-schedule - Received completion notification. Success: true
+INFO: 2025/05/19 01:07:00 logger.go:31: TaskID: task2-http-get - Cron triggered for task
+INFO: 2025/05/19 01:07:00 logger.go:31: TaskID: task1-echo-schedule - Cron triggered for task
+INFO: 2025/05/19 01:07:00 logger.go:31: TaskID: task1-echo-schedule - Starting task execution
+INFO: 2025/05/19 01:07:00 logger.go:31: TaskID: task2-http-get - Starting task execution
+INFO: 2025/05/19 01:07:00 logger.go:31: TaskID: task1-echo-schedule - Execution Result - TaskID: task1-echo-schedule, Status: SUCCESS, Duration: 1.675697ms, Output: Привет от task1! Время: $(date)
+INFO: 2025/05/19 01:07:00 logger.go:31: TaskID: task1-echo-schedule - Received completion notification. Success: true
+INFO: 2025/05/19 01:07:00 logger.go:31: TaskID: task2-http-get - Execution Result - TaskID: task2-http-get, Status: SUCCESS, Duration: 210.675017ms, Output: {
+  "args": {
+    "param": "value"
+  }, 
+  "headers": {
+    "Accept-Encoding": "gzip", 
+    "Host": "httpbin.org", 
+    "User-Agent": "Go-http-client/2.0", 
+    "X-Amzn-Trace-Id": "Root=1-682a5a04-03985913320e5b3d36d1bd65", 
+    "X-Custom-Header": "GoTaskManager"
+  }, 
+  "origin": "78.138.130.109", 
+  "url": "https://httpbin.org/get?param=value"
+}
+INFO: 2025/05/19 01:07:00 logger.go:31: TaskID: task2-http-get - Received completion notification. Success: true
+INFO: 2025/05/19 01:07:15 logger.go:31: TaskID: task1-echo-schedule - Cron triggered for task
+INFO: 2025/05/19 01:07:15 logger.go:31: TaskID: task1-echo-schedule - Starting task execution
+INFO: 2025/05/19 01:07:15 logger.go:31: TaskID: task1-echo-schedule - Execution Result - TaskID: task1-echo-schedule, Status: SUCCESS, Duration: 944.78µs, Output: Привет от task1! Время: $(date)
+INFO: 2025/05/19 01:07:15 logger.go:31: TaskID: task1-echo-schedule - Received completion notification. Success: true
