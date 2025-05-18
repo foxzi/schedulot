@@ -13,6 +13,9 @@ taskmanager
 *.log
 app.log
 
+# Logs
+*.log
+
 # IDE/editor files
 .vscode/
 .idea/
