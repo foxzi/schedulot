@@ -2079,3 +2079,234 @@ INFO: 2025/05/19 00:31:15 logger.go:31: TaskID: task1-echo-schedule - Cron trigg
 INFO: 2025/05/19 00:31:15 logger.go:31: TaskID: task1-echo-schedule - Starting task execution
 INFO: 2025/05/19 00:31:15 logger.go:31: TaskID: task1-echo-schedule - Execution Result - TaskID: task1-echo-schedule, Status: SUCCESS, Duration: 1.680163ms, Output: Привет от task1! Время: $(date)
 INFO: 2025/05/19 00:31:15 logger.go:31: TaskID: task1-echo-schedule - Received completion notification. Success: true
+INFO: 2025/05/19 00:32:00 logger.go:31: TaskID: task2-http-get - Cron triggered for task
+INFO: 2025/05/19 00:32:00 logger.go:31: TaskID: task2-http-get - Starting task execution
+INFO: 2025/05/19 00:32:01 logger.go:31: TaskID: task2-http-get - Execution Result - TaskID: task2-http-get, Status: SUCCESS, Duration: 1.06186985s, Output: {
+  "args": {
+    "param": "value"
+  }, 
+  "headers": {
+    "Accept-Encoding": "gzip", 
+    "Host": "httpbin.org", 
+    "User-Agent": "Go-http-client/2.0", 
+    "X-Amzn-Trace-Id": "Root=1-682a51d2-593ee3ed27f6db3f3090d459", 
+    "X-Custom-Header": "GoTaskManager"
+  }, 
+  "origin": "78.138.130.109", 
+  "url": "https://httpbin.org/get?param=value"
+}
+INFO: 2025/05/19 00:32:01 logger.go:31: TaskID: task2-http-get - Received completion notification. Success: true
+INFO: 2025/05/19 00:32:15 logger.go:31: TaskID: task1-echo-schedule - Cron triggered for task
+INFO: 2025/05/19 00:32:15 logger.go:31: TaskID: task1-echo-schedule - Starting task execution
+INFO: 2025/05/19 00:32:15 logger.go:31: TaskID: task1-echo-schedule - Execution Result - TaskID: task1-echo-schedule, Status: SUCCESS, Duration: 1.760173ms, Output: Привет от task1! Время: $(date)
+INFO: 2025/05/19 00:32:15 logger.go:31: TaskID: task1-echo-schedule - Received completion notification. Success: true
+INFO: 2025/05/19 00:33:00 logger.go:31: TaskID: task2-http-get - Cron triggered for task
+INFO: 2025/05/19 00:33:00 logger.go:31: TaskID: task2-http-get - Starting task execution
+INFO: 2025/05/19 00:33:00 logger.go:31: TaskID: task2-http-get - Execution Result - TaskID: task2-http-get, Status: SUCCESS, Duration: 175.96722ms, Output: {
+  "args": {
+    "param": "value"
+  }, 
+  "headers": {
+    "Accept-Encoding": "gzip", 
+    "Host": "httpbin.org", 
+    "User-Agent": "Go-http-client/2.0", 
+    "X-Amzn-Trace-Id": "Root=1-682a520d-033f340d5b997d5212ae4982", 
+    "X-Custom-Header": "GoTaskManager"
+  }, 
+  "origin": "78.138.130.109", 
+  "url": "https://httpbin.org/get?param=value"
+}
+INFO: 2025/05/19 00:33:00 logger.go:31: TaskID: task2-http-get - Received completion notification. Success: true
+INFO: 2025/05/19 00:33:15 logger.go:31: TaskID: task1-echo-schedule - Cron triggered for task
+INFO: 2025/05/19 00:33:15 logger.go:31: TaskID: task1-echo-schedule - Starting task execution
+INFO: 2025/05/19 00:33:15 logger.go:31: TaskID: task1-echo-schedule - Execution Result - TaskID: task1-echo-schedule, Status: SUCCESS, Duration: 1.710071ms, Output: Привет от task1! Время: $(date)
+INFO: 2025/05/19 00:33:15 logger.go:31: TaskID: task1-echo-schedule - Received completion notification. Success: true
+INFO: 2025/05/19 00:34:00 logger.go:31: TaskID: task2-http-get - Cron triggered for task
+INFO: 2025/05/19 00:34:00 logger.go:31: TaskID: task2-http-get - Starting task execution
+INFO: 2025/05/19 00:34:01 logger.go:31: TaskID: task2-http-get - Execution Result - TaskID: task2-http-get, Status: SUCCESS, Duration: 985.475324ms, Output: {
+  "args": {
+    "param": "value"
+  }, 
+  "headers": {
+    "Accept-Encoding": "gzip", 
+    "Host": "httpbin.org", 
+    "User-Agent": "Go-http-client/2.0", 
+    "X-Amzn-Trace-Id": "Root=1-682a524a-1094a4465e5b5c43621e0875", 
+    "X-Custom-Header": "GoTaskManager"
+  }, 
+  "origin": "78.138.130.109", 
+  "url": "https://httpbin.org/get?param=value"
+}
+INFO: 2025/05/19 00:34:01 logger.go:31: TaskID: task2-http-get - Received completion notification. Success: true
+INFO: 2025/05/19 00:34:15 logger.go:31: TaskID: task1-echo-schedule - Cron triggered for task
+INFO: 2025/05/19 00:34:15 logger.go:31: TaskID: task1-echo-schedule - Starting task execution
+INFO: 2025/05/19 00:34:15 logger.go:31: TaskID: task1-echo-schedule - Execution Result - TaskID: task1-echo-schedule, Status: SUCCESS, Duration: 1.75014ms, Output: Привет от task1! Время: $(date)
+INFO: 2025/05/19 00:34:15 logger.go:31: TaskID: task1-echo-schedule - Received completion notification. Success: true
+INFO: 2025/05/19 00:35:00 logger.go:31: TaskID: task2-http-get - Cron triggered for task
+INFO: 2025/05/19 00:35:00 logger.go:31: TaskID: task2-http-get - Starting task execution
+INFO: 2025/05/19 00:35:00 logger.go:31: TaskID: task2-http-get - Execution Result - TaskID: task2-http-get, Status: SUCCESS, Duration: 154.808565ms, Output: {
+  "args": {
+    "param": "value"
+  }, 
+  "headers": {
+    "Accept-Encoding": "gzip", 
+    "Host": "httpbin.org", 
+    "User-Agent": "Go-http-client/2.0", 
+    "X-Amzn-Trace-Id": "Root=1-682a5285-5ecec39412ccee815faed035", 
+    "X-Custom-Header": "GoTaskManager"
+  }, 
+  "origin": "78.138.130.109", 
+  "url": "https://httpbin.org/get?param=value"
+}
+INFO: 2025/05/19 00:35:00 logger.go:31: TaskID: task2-http-get - Received completion notification. Success: true
+INFO: 2025/05/19 00:35:15 logger.go:31: TaskID: task1-echo-schedule - Cron triggered for task
+INFO: 2025/05/19 00:35:15 logger.go:31: TaskID: task1-echo-schedule - Starting task execution
+INFO: 2025/05/19 00:35:15 logger.go:31: TaskID: task1-echo-schedule - Execution Result - TaskID: task1-echo-schedule, Status: SUCCESS, Duration: 1.839174ms, Output: Привет от task1! Время: $(date)
+INFO: 2025/05/19 00:35:15 logger.go:31: TaskID: task1-echo-schedule - Received completion notification. Success: true
+INFO: 2025/05/19 00:36:00 logger.go:31: TaskID: task2-http-get - Cron triggered for task
+INFO: 2025/05/19 00:36:00 logger.go:31: TaskID: task2-http-get - Starting task execution
+INFO: 2025/05/19 00:36:01 logger.go:31: TaskID: task2-http-get - Execution Result - TaskID: task2-http-get, Status: SUCCESS, Duration: 1.106379738s, Output: {
+  "args": {
+    "param": "value"
+  }, 
+  "headers": {
+    "Accept-Encoding": "gzip", 
+    "Host": "httpbin.org", 
+    "User-Agent": "Go-http-client/2.0", 
+    "X-Amzn-Trace-Id": "Root=1-682a52c1-560b407f3663528218669075", 
+    "X-Custom-Header": "GoTaskManager"
+  }, 
+  "origin": "78.138.130.109", 
+  "url": "https://httpbin.org/get?param=value"
+}
+INFO: 2025/05/19 00:36:01 logger.go:31: TaskID: task2-http-get - Received completion notification. Success: true
+INFO: 2025/05/19 00:36:15 logger.go:31: TaskID: task1-echo-schedule - Cron triggered for task
+INFO: 2025/05/19 00:36:15 logger.go:31: TaskID: task1-echo-schedule - Starting task execution
+INFO: 2025/05/19 00:36:15 logger.go:31: TaskID: task1-echo-schedule - Execution Result - TaskID: task1-echo-schedule, Status: SUCCESS, Duration: 1.705922ms, Output: Привет от task1! Время: $(date)
+INFO: 2025/05/19 00:36:15 logger.go:31: TaskID: task1-echo-schedule - Received completion notification. Success: true
+INFO: 2025/05/19 00:37:00 logger.go:31: TaskID: task2-http-get - Cron triggered for task
+INFO: 2025/05/19 00:37:00 logger.go:31: TaskID: task2-http-get - Starting task execution
+INFO: 2025/05/19 00:37:00 logger.go:31: TaskID: task2-http-get - Execution Result - TaskID: task2-http-get, Status: SUCCESS, Duration: 561.114474ms, Output: {
+  "args": {
+    "param": "value"
+  }, 
+  "headers": {
+    "Accept-Encoding": "gzip", 
+    "Host": "httpbin.org", 
+    "User-Agent": "Go-http-client/2.0", 
+    "X-Amzn-Trace-Id": "Root=1-682a52fd-4e4b62fc698315383bd16b13", 
+    "X-Custom-Header": "GoTaskManager"
+  }, 
+  "origin": "78.138.130.109", 
+  "url": "https://httpbin.org/get?param=value"
+}
+INFO: 2025/05/19 00:37:00 logger.go:31: TaskID: task2-http-get - Received completion notification. Success: true
+INFO: 2025/05/19 00:37:15 logger.go:31: TaskID: task1-echo-schedule - Cron triggered for task
+INFO: 2025/05/19 00:37:15 logger.go:31: TaskID: task1-echo-schedule - Starting task execution
+INFO: 2025/05/19 00:37:15 logger.go:31: TaskID: task1-echo-schedule - Execution Result - TaskID: task1-echo-schedule, Status: SUCCESS, Duration: 1.279909ms, Output: Привет от task1! Время: $(date)
+INFO: 2025/05/19 00:37:15 logger.go:31: TaskID: task1-echo-schedule - Received completion notification. Success: true
+INFO: 2025/05/19 00:38:00 logger.go:31: TaskID: task2-http-get - Cron triggered for task
+INFO: 2025/05/19 00:38:00 logger.go:31: TaskID: task2-http-get - Starting task execution
+INFO: 2025/05/19 00:38:00 logger.go:31: TaskID: task2-http-get - Execution Result - TaskID: task2-http-get, Status: SUCCESS, Duration: 601.980544ms, Output: {
+  "args": {
+    "param": "value"
+  }, 
+  "headers": {
+    "Accept-Encoding": "gzip", 
+    "Host": "httpbin.org", 
+    "User-Agent": "Go-http-client/2.0", 
+    "X-Amzn-Trace-Id": "Root=1-682a5339-0d7fc1ed79cb3be37c3ef27e", 
+    "X-Custom-Header": "GoTaskManager"
+  }, 
+  "origin": "78.138.130.109", 
+  "url": "https://httpbin.org/get?param=value"
+}
+INFO: 2025/05/19 00:38:00 logger.go:31: TaskID: task2-http-get - Received completion notification. Success: true
+INFO: 2025/05/19 00:38:15 logger.go:31: TaskID: task1-echo-schedule - Cron triggered for task
+INFO: 2025/05/19 00:38:15 logger.go:31: TaskID: task1-echo-schedule - Starting task execution
+INFO: 2025/05/19 00:38:15 logger.go:31: TaskID: task1-echo-schedule - Execution Result - TaskID: task1-echo-schedule, Status: SUCCESS, Duration: 2.665111ms, Output: Привет от task1! Время: $(date)
+INFO: 2025/05/19 00:38:15 logger.go:31: TaskID: task1-echo-schedule - Received completion notification. Success: true
+INFO: 2025/05/19 00:39:00 logger.go:31: TaskID: task2-http-get - Cron triggered for task
+INFO: 2025/05/19 00:39:00 logger.go:31: TaskID: task2-http-get - Starting task execution
+INFO: 2025/05/19 00:39:00 logger.go:31: TaskID: task2-http-get - Execution Result - TaskID: task2-http-get, Status: SUCCESS, Duration: 183.238832ms, Output: {
+  "args": {
+    "param": "value"
+  }, 
+  "headers": {
+    "Accept-Encoding": "gzip", 
+    "Host": "httpbin.org", 
+    "User-Agent": "Go-http-client/2.0", 
+    "X-Amzn-Trace-Id": "Root=1-682a5375-72e682f1720b65ff28907793", 
+    "X-Custom-Header": "GoTaskManager"
+  }, 
+  "origin": "78.138.130.109", 
+  "url": "https://httpbin.org/get?param=value"
+}
+INFO: 2025/05/19 00:39:00 logger.go:31: TaskID: task2-http-get - Received completion notification. Success: true
+INFO: 2025/05/19 00:39:15 logger.go:31: TaskID: task1-echo-schedule - Cron triggered for task
+INFO: 2025/05/19 00:39:15 logger.go:31: TaskID: task1-echo-schedule - Starting task execution
+INFO: 2025/05/19 00:39:15 logger.go:31: TaskID: task1-echo-schedule - Execution Result - TaskID: task1-echo-schedule, Status: SUCCESS, Duration: 1.939162ms, Output: Привет от task1! Время: $(date)
+INFO: 2025/05/19 00:39:15 logger.go:31: TaskID: task1-echo-schedule - Received completion notification. Success: true
+INFO: 2025/05/19 00:40:00 logger.go:31: TaskID: task2-http-get - Cron triggered for task
+INFO: 2025/05/19 00:40:00 logger.go:31: TaskID: task2-http-get - Starting task execution
+INFO: 2025/05/19 00:40:01 logger.go:31: TaskID: task2-http-get - Execution Result - TaskID: task2-http-get, Status: SUCCESS, Duration: 1.112979582s, Output: {
+  "args": {
+    "param": "value"
+  }, 
+  "headers": {
+    "Accept-Encoding": "gzip", 
+    "Host": "httpbin.org", 
+    "User-Agent": "Go-http-client/2.0", 
+    "X-Amzn-Trace-Id": "Root=1-682a53b1-5d00583a780bc18c06cfaf57", 
+    "X-Custom-Header": "GoTaskManager"
+  }, 
+  "origin": "78.138.130.109", 
+  "url": "https://httpbin.org/get?param=value"
+}
+INFO: 2025/05/19 00:40:01 logger.go:31: TaskID: task2-http-get - Received completion notification. Success: true
+INFO: 2025/05/19 00:40:15 logger.go:31: TaskID: task1-echo-schedule - Cron triggered for task
+INFO: 2025/05/19 00:40:15 logger.go:31: TaskID: task1-echo-schedule - Starting task execution
+INFO: 2025/05/19 00:40:15 logger.go:31: TaskID: task1-echo-schedule - Execution Result - TaskID: task1-echo-schedule, Status: SUCCESS, Duration: 1.833914ms, Output: Привет от task1! Время: $(date)
+INFO: 2025/05/19 00:40:15 logger.go:31: TaskID: task1-echo-schedule - Received completion notification. Success: true
+INFO: 2025/05/19 00:41:00 logger.go:31: TaskID: task2-http-get - Cron triggered for task
+INFO: 2025/05/19 00:41:00 logger.go:31: TaskID: task2-http-get - Starting task execution
+INFO: 2025/05/19 00:41:00 logger.go:31: TaskID: task2-http-get - Execution Result - TaskID: task2-http-get, Status: SUCCESS, Duration: 504.766378ms, Output: {
+  "args": {
+    "param": "value"
+  }, 
+  "headers": {
+    "Accept-Encoding": "gzip", 
+    "Host": "httpbin.org", 
+    "User-Agent": "Go-http-client/2.0", 
+    "X-Amzn-Trace-Id": "Root=1-682a53ed-0909c079480a49861743f3d0", 
+    "X-Custom-Header": "GoTaskManager"
+  }, 
+  "origin": "78.138.130.109", 
+  "url": "https://httpbin.org/get?param=value"
+}
+INFO: 2025/05/19 00:41:00 logger.go:31: TaskID: task2-http-get - Received completion notification. Success: true
+INFO: 2025/05/19 00:41:15 logger.go:31: TaskID: task1-echo-schedule - Cron triggered for task
+INFO: 2025/05/19 00:41:15 logger.go:31: TaskID: task1-echo-schedule - Starting task execution
+INFO: 2025/05/19 00:41:15 logger.go:31: TaskID: task1-echo-schedule - Execution Result - TaskID: task1-echo-schedule, Status: SUCCESS, Duration: 1.550391ms, Output: Привет от task1! Время: $(date)
+INFO: 2025/05/19 00:41:15 logger.go:31: TaskID: task1-echo-schedule - Received completion notification. Success: true
+INFO: 2025/05/19 00:42:00 logger.go:31: TaskID: task2-http-get - Cron triggered for task
+INFO: 2025/05/19 00:42:00 logger.go:31: TaskID: task2-http-get - Starting task execution
+INFO: 2025/05/19 00:42:00 logger.go:31: TaskID: task2-http-get - Execution Result - TaskID: task2-http-get, Status: SUCCESS, Duration: 139.456646ms, Output: {
+  "args": {
+    "param": "value"
+  }, 
+  "headers": {
+    "Accept-Encoding": "gzip", 
+    "Host": "httpbin.org", 
+    "User-Agent": "Go-http-client/2.0", 
+    "X-Amzn-Trace-Id": "Root=1-682a5429-33323e395e9f9a4e46d25f04", 
+    "X-Custom-Header": "GoTaskManager"
+  }, 
+  "origin": "78.138.130.109", 
+  "url": "https://httpbin.org/get?param=value"
+}
+INFO: 2025/05/19 00:42:00 logger.go:31: TaskID: task2-http-get - Received completion notification. Success: true
+INFO: 2025/05/19 00:42:15 logger.go:31: TaskID: task1-echo-schedule - Cron triggered for task
+INFO: 2025/05/19 00:42:15 logger.go:31: TaskID: task1-echo-schedule - Starting task execution
+INFO: 2025/05/19 00:42:15 logger.go:31: TaskID: task1-echo-schedule - Execution Result - TaskID: task1-echo-schedule, Status: SUCCESS, Duration: 1.798453ms, Output: Привет от task1! Время: $(date)
+INFO: 2025/05/19 00:42:15 logger.go:31: TaskID: task1-echo-schedule - Received completion notification. Success: true
