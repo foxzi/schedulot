@@ -1,0 +1,28 @@
+id: "test-all-notifications-task"
+description: "Тестовая задача для проверки всех типов оповещений."
+triggers:
+  - type: "schedule"
+    schedule: "*/10 * * * * *" # Каждую минуту
+action:
+  type: "command"
+  command: # Изменено с command_action на command
+    path: "echo" # Изменено с command на path
+    args: ["Это тестовые данные из задачи для оповещения."] # Аргументы теперь в списке
+notify:
+  - type: "file"
+    file_notification:
+      file_path: "/tmp/test_task_alerts.log"
+      message: "Файл: Задача {{.TaskID}} выполнена {{.Date}} test-all-notifications-task. Данные: {{.Data}}"
+      append: true
+
+# Для тестирования каждого типа оповещения по отдельности,
+# можно закомментировать другие типы в секции notify.
+
+# Важно:
+# 1. Для email: Убедитесь, что в `pkg/plugins/notification/email/email_notifier.go`
+#    настроены или передаются корректные данные SMTP сервера.
+# 2. Для Slack: Замените `YOUR_WEBHOOK_URL_HERE` на действующий Slack Webhook URL.
+# 3. Для Telegram: Замените `YOUR_TELEGRAM_BOT_TOKEN_HERE` и `YOUR_TELEGRAM_CHAT_ID_HERE`
+#    на ваши реальные токен бота и ID чата.
+#    Также, убедитесь, что плагин для Telegram реализован (в предыдущих шагах его не было).
+#    Если плагина для Telegram нет, эту секцию нужно будет удалить или реализовать плагин.

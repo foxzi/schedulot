@@ -1,6 +1,10 @@
 package task
 
-import "time"
+import (
+	"time"
+
+	"github.com/piligrim/gotask2/pkg/notification" // Added import
+)
 
 // TriggerType defines the type of trigger for a task.
 type TriggerType string
@@ -28,13 +32,14 @@ const (
 
 // Task defines the structure for a task.
 type Task struct {
-	ID          string        `yaml:"id"`
-	Description string        `yaml:"description,omitempty"`
-	Triggers    []Trigger     `yaml:"triggers"`
-	Action      Action        `yaml:"action"`
-	DependsOn   []Dependency  `yaml:"depends_on,omitempty"` // IDs of tasks this task depends on
-	MaxRetries  int           `yaml:"max_retries,omitempty"`
-	Timeout     time.Duration `yaml:"timeout,omitempty"` // e.g., "30s", "5m"
+	ID          string                            `yaml:"id"`
+	Description string                            `yaml:"description,omitempty"`
+	Triggers    []Trigger                         `yaml:"triggers"`
+	Action      Action                            `yaml:"action"`
+	DependsOn   []Dependency                      `yaml:"depends_on,omitempty"` // IDs of tasks this task depends on
+	MaxRetries  int                               `yaml:"max_retries,omitempty"`
+	Timeout     time.Duration                     `yaml:"timeout,omitempty"` // e.g., "30s", "5m"
+	Notify      []notification.NotificationConfig `yaml:"notify,omitempty"`  // Added field
 }
 
 // Trigger defines how a task is initiated.

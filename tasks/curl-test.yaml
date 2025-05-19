@@ -10,3 +10,9 @@ action:
     method: "GET"
     headers:
       X-Custom-Header: "GoTaskManager"
+notify:
+  type: "file"
+  file_notification:
+    file_path: "/tmp/task_alerts.log"
+    message: "Task my-main-task completed successfully at {{.Date}} {{.TaskID}} {{.Data}}."
+    append: true

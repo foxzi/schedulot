@@ -48,8 +48,8 @@ func main() {
 			appLogger.Info("Main", "No valid tasks found or directory is empty.")
 		} else {
 			appLogger.Info("Main", "Successfully validated %d task(s).", len(tasks))
-			for fp, task := range tasks {
-				appLogger.Info("Main", "  - Valid task ID: %s from file: %s", task.ID, fp)
+			for fp, taskInstance := range tasks { // Renamed task to taskInstance
+				appLogger.Info("Main", "  - Valid task ID: %s from file: %s", taskInstance.ID, fp)
 			}
 		}
 		appLogger.Info("Main", "Task validation finished.")

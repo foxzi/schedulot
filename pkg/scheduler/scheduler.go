@@ -7,11 +7,18 @@ import (
 	"time"
 
 	"github.com/fsnotify/fsnotify"
-	"github.com/piligrim/gotask2/pkg/config" // Added import for config
+	"github.com/piligrim/gotask2/pkg/config"
 	"github.com/piligrim/gotask2/pkg/executor"
 	"github.com/piligrim/gotask2/pkg/logger"
+	"github.com/piligrim/gotask2/pkg/notification"
 	"github.com/piligrim/gotask2/pkg/task"
 	"github.com/robfig/cron/v3"
+
+	fileNotifierPlugin "github.com/piligrim/gotask2/pkg/plugins/notification/file" // Renamed alias for clarity
+	// Import other notifier plugins as they are implemented
+	// "github.com/piligrim/gotask2/pkg/plugins/notification/email"
+	// "github.com/piligrim/gotask2/pkg/plugins/notification/slack"
+	// "github.com/piligrim/gotask2/pkg/plugins/notification/telegram"
 )
 
 // Scheduler manages and runs tasks.
@@ -23,7 +30,7 @@ type Scheduler struct {
 	cronScheduler    *cron.Cron
 	taskResults      map[string]taskResult     // Stores the result of the last execution of each task
 	mu               sync.RWMutex              // For concurrent access to taskResults, tasks, taskFilePaths, taskCronEntryIDs
-	notifyChan       chan taskExecutionUpdate  // Channel to notify about task completion
+	notifyChan       chan TaskExecutionUpdate  // Channel to notify about task completion
 	stopChan         chan struct{}             // Channel to signal scheduler shutdown
 	wg               sync.WaitGroup            // To wait for goroutines to finish
 	taskDir          string                    // Directory to watch for task file changes
@@ -36,10 +43,13 @@ type taskResult struct {
 	output  string
 }
 
-type taskExecutionUpdate struct {
-	taskID  string
-	success bool
-	output  string
+// TaskExecutionUpdate holds information about a completed task execution.
+// Fields are exported (capitalized) to be accessible by other packages if needed,
+// though primarily used internally by the scheduler now.
+type TaskExecutionUpdate struct {
+	TaskID  string
+	Success bool
+	Output  string
 }
 
 // New creates a new Scheduler.
@@ -56,7 +66,7 @@ func New(exec *executor.Executor, l *logger.Logger, taskDirPath string) (*Schedu
 		logger:           l,
 		cronScheduler:    cron.New(cron.WithSeconds()), // Support for second-level precision if needed
 		taskResults:      make(map[string]taskResult),
-		notifyChan:       make(chan taskExecutionUpdate, 100), // Buffered channel
+		notifyChan:       make(chan TaskExecutionUpdate, 100), // Buffered channel, uses exported struct
 		stopChan:         make(chan struct{}),
 		taskDir:          taskDirPath,
 		watcher:          watcher,
@@ -114,7 +124,7 @@ func (s *Scheduler) AddTask(t task.Task, filePath string) error {
 
 // tryRunTask attempts to run a task if all its dependencies are met.
 // dependentTask is the task that just finished and might trigger this one.
-func (s *Scheduler) tryRunTask(taskID string, dependentTask *taskExecutionUpdate) {
+func (s *Scheduler) tryRunTask(taskID string, dependentTask *TaskExecutionUpdate) {
 	t, exists := s.getTask(taskID)
 	if !exists {
 		s.logger.Error(taskID, "Attempted to run non-existent task", nil)
@@ -127,7 +137,7 @@ func (s *Scheduler) tryRunTask(taskID string, dependentTask *taskExecutionUpdate
 }
 
 // checkDependencies checks if all dependencies for a task are met.
-func (s *Scheduler) checkDependencies(t task.Task, completedDependency *taskExecutionUpdate) bool {
+func (s *Scheduler) checkDependencies(t task.Task, completedDependency *TaskExecutionUpdate) bool {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 
@@ -138,9 +148,9 @@ func (s *Scheduler) checkDependencies(t task.Task, completedDependency *taskExec
 	for _, dep := range t.DependsOn {
 		result, ok := s.taskResults[dep.TaskID]
 		// If the completedDependency is the one we are checking, use its fresh result
-		if completedDependency != nil && dep.TaskID == completedDependency.taskID {
+		if completedDependency != nil && dep.TaskID == completedDependency.TaskID {
 			ok = true
-			result = taskResult{success: completedDependency.success, output: completedDependency.output}
+			result = taskResult{success: completedDependency.Success, output: completedDependency.Output}
 		}
 
 		if !ok {
@@ -188,7 +198,7 @@ func (s *Scheduler) runTask(t task.Task) {
 
 		// Notify that this task has completed
 		select {
-		case s.notifyChan <- taskExecutionUpdate{taskID: t.ID, success: success, output: output}:
+		case s.notifyChan <- TaskExecutionUpdate{TaskID: t.ID, Success: success, Output: output}: // Use exported struct
 		case <-s.stopChan:
 			s.logger.Info(t.ID, "Scheduler stopping, not sending notification")
 			return
@@ -360,21 +370,98 @@ func (s *Scheduler) initialDependencyCheck() {
 
 func (s *Scheduler) listenForTaskCompletions() {
 	defer s.wg.Done()
-	s.logger.Info("SchedulerListener", "Starting to listen for task completions.")
+	s.logger.Info("Scheduler", "Listening for task completions to trigger dependent tasks and notifications.")
+
 	for {
 		select {
-		case update := <-s.notifyChan:
-			s.logger.Info(update.taskID, "Received completion notification. Success: %v", update.success)
-			s.triggerDependents(update)
+		case update := <-s.notifyChan: // Receives TaskExecutionUpdate
+			s.logger.Info(update.TaskID, "Scheduler: Task completed. Success: %v, Output: %s", update.Success, update.Output)
+
+			// Process notifications for the completed task
+			if update.Success {
+				completedTask, exists := s.getTask(update.TaskID) // getTask is an internal helper
+				if !exists {
+					s.logger.Error(update.TaskID, "Scheduler: Task definition not found for notification processing", nil)
+					continue
+				}
+
+				if completedTask.Notify != nil && len(completedTask.Notify) > 0 {
+					s.logger.Info(completedTask.ID, "Scheduler: Processing %d notification(s) for task", len(completedTask.Notify))
+
+					// Prepare data for notification.Notifier interface (map[string]interface{})
+					// The ProcessTemplate function in notification package uses notification.TemplateData struct.
+					// Notifier plugins will call ProcessTemplate with the correct struct.
+					notificationDataMap := map[string]interface{}{
+						"TaskID": completedTask.ID,
+						"Date":   time.Now().Format(time.RFC3339),
+						"Data":   update.Output,
+					}
+
+					for _, notifyCfg := range completedTask.Notify {
+						s.logger.Info(completedTask.ID, "Scheduler: Attempting notification type: %s", notifyCfg.Type)
+						var notifierPlugin notification.Notifier
+						var err error
+
+						switch notifyCfg.Type {
+						case "file":
+							if notifyCfg.FileNotification.FilePath != "" {
+								// Use the imported alias for the file notifier plugin
+								notifierPlugin = fileNotifierPlugin.NewFileNotifier(notifyCfg.FileNotification)
+							} else {
+								s.logger.Error(completedTask.ID, "Scheduler: File notification configured but FilePath is empty", nil)
+								continue
+							}
+						case "email":
+							s.logger.Info(completedTask.ID, "Scheduler: Email notification type encountered (implementation pending). Recipient(s): %v", notifyCfg.EmailNotification.To)
+							// notifierPlugin = emailNotifier.NewEmailNotifier(notifyCfg.EmailNotification, "smtp.example.com", "587", "user", "pass")
+							continue // Skip until implemented
+						case "slack":
+							s.logger.Info(completedTask.ID, "Scheduler: Slack notification type encountered (implementation pending). Webhook: %s", notifyCfg.SlackNotification.WebhookURL)
+							// notifierPlugin = slackNotifier.NewSlackNotifier(notifyCfg.SlackNotification)
+							continue // Skip until implemented
+						case "telegram":
+							s.logger.Info(completedTask.ID, "Scheduler: Telegram notification type encountered (implementation pending). ChatID: %s", notifyCfg.TelegramNotification.ChatID)
+							// notifierPlugin = telegramNotifier.NewTelegramNotifier(notifyCfg.TelegramNotification)
+							continue // Skip until implemented
+						default:
+							s.logger.Error(completedTask.ID, fmt.Sprintf("Scheduler: Unsupported notification type: %s", notifyCfg.Type), nil)
+							continue
+						}
+
+						if notifierPlugin != nil {
+							// Pass the map[string]interface{} to the Notify method
+							err = notifierPlugin.Notify(notificationDataMap)
+							if err != nil {
+								s.logger.Error(completedTask.ID, fmt.Sprintf("Scheduler: Failed to send %s notification", notifyCfg.Type), err)
+							} else {
+								s.logger.Info(completedTask.ID, fmt.Sprintf("Scheduler: Successfully sent %s notification", notifyCfg.Type))
+							}
+						}
+					}
+				} else {
+					s.logger.Info(completedTask.ID, "Scheduler: No notifications configured for this task.")
+				}
+			}
+
+			// Trigger dependent tasks using the received update (which has exported fields)
+			s.triggerDependentTasks(update.TaskID, update.Success, update.Output)
+
 		case <-s.stopChan:
-			s.logger.Info("SchedulerListener", "Stopping listener for task completions.")
+			s.logger.Info("Scheduler", "Stopping task completion listener.")
 			return
 		}
 	}
 }
 
-// triggerDependents finds and tries to run tasks that depend on the completed task.
-func (s *Scheduler) triggerDependents(completedTaskUpdate taskExecutionUpdate) {
+// getTask retrieves a task definition by its ID. It's an internal helper.
+func (s *Scheduler) getTask(taskID string) (task.Task, bool) {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+	t, exists := s.tasks[taskID]
+	return t, exists
+}
+
+func (s *Scheduler) triggerDependentTasks(completedTaskID string, success bool, output string) {
 	s.mu.RLock()
 	tasksToConsider := make([]task.Task, 0, len(s.tasks))
 	for _, t := range s.tasks {
@@ -384,9 +471,9 @@ func (s *Scheduler) triggerDependents(completedTaskUpdate taskExecutionUpdate) {
 
 	for _, t := range tasksToConsider {
 		for _, dep := range t.DependsOn {
-			if dep.TaskID == completedTaskUpdate.taskID {
-				s.logger.Info(t.ID, "Dependency %s completed, checking if task can run", completedTaskUpdate.taskID)
-				s.tryRunTask(t.ID, &completedTaskUpdate)
+			if dep.TaskID == completedTaskID {
+				// Pass the actual execution update for the dependency check
+				s.tryRunTask(t.ID, &TaskExecutionUpdate{TaskID: completedTaskID, Success: success, Output: output})
 				break // Found the dependency, no need to check other dependencies of this task for this trigger
 			}
 		}
@@ -409,11 +496,4 @@ func (s *Scheduler) Stop() {
 	}
 	s.wg.Wait() // Wait for all processing goroutines to finish
 	s.logger.Info("Scheduler", "Scheduler stopped gracefully.")
-}
-
-func (s *Scheduler) getTask(taskID string) (task.Task, bool) {
-	s.mu.RLock()
-	defer s.mu.RUnlock()
-	t, exists := s.tasks[taskID]
-	return t, exists
 }

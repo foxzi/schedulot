@@ -1,6 +1,6 @@
 # Go Task Manager
 
-Это простое приложение для управления задачами, написанное на Go. Оно позволяет определять задачи в YAML файлах, запускать их по расписанию или в зависимости от результатов выполнения других задач. Поддерживается выполнение команд оболочки и HTTP запросов.
+Это простое приложение для управления задачами, написанное на Go. Оно позволяет определять задачи в YAML файлах, запускать их по расписанию или в зависимости от результатов выполнения других задач. Поддерживается выполнение команд оболочки, HTTP запросов, а также отправка уведомлений о завершении задач.
 
 ## Возможности
 
@@ -9,6 +9,11 @@
 *   Запуск задач на основе успешного или неуспешного выполнения других задач.
 *   Выполнение команд оболочки.
 *   Выполнение HTTP запросов.
+*   **Уведомления о завершении задач:**
+    *   Отправка уведомлений при успешном завершении задачи.
+    *   Поддержка различных типов уведомлений: запись в файл, отправка по email (в разработке), Slack (в разработке), Telegram (в разработке).
+    *   Реализация каждого типа уведомлений в виде плагина.
+    *   Использование шаблонов сообщений с переменными (`{{.TaskID}}`, `{{.Date}}`, `{{.Data}}`) для вставки динамических данных из контекста выполнения задачи.
 *   Параллельное выполнение задач.
 *   Логирование результатов выполнения задач.
 *   Настройка максимального количества повторных попыток и таймаутов для задач.
@@ -25,6 +30,9 @@ gotask2/
 │   ├── config/             # Загрузка конфигурации задач
 │   ├── executor/           # Выполнение задач
 │   ├── logger/             # Логирование
+│   ├── notification/       # Логика уведомлений (интерфейсы, обработка шаблонов)
+│   ├── plugins/            # Плагины
+│   │   └── notification/   # Плагины уведомлений (file, email, slack, telegram)
 │   ├── scheduler/          # Планировщик задач
 │   └── task/               # Определения структур задач
 ├── tasks/                  # Директория для YAML файлов с задачами
@@ -127,6 +135,13 @@ action:
       Content-Type: "application/json"
       Authorization: "Bearer your_token"
     body: '''{"key": "value"}''' # Опционально, тело запроса (для POST, PUT)
+
+notify:
+  - type: "file" # Тип уведомления: "file", "email" (в разработке), "slack" (в разработке), "telegram" (в разработке)
+    file_notification: # Используется, если type = "file"
+      file_path: "/path/to/notification.log"
+      message: "Задача {{.TaskID}} завершена в {{.Date}}. Результат: {{.Data}}"
+      append: true # Опционально, если true, сообщение будет добавлено в конец файла
 ```
 
 ### Поля задачи:
@@ -158,6 +173,31 @@ action:
         *   `method` (string, обязательное): HTTP метод (GET, POST, PUT, DELETE и т.д.).
         *   `headers` (map, опциональное): Заголовки HTTP запроса.
         *   `body` (string, опциональное): Тело HTTP запроса (например, для POST или PUT).
+*   `notify` (list, опциональное): Список конфигураций уведомлений, которые будут отправлены после успешного выполнения задачи.
+    *   `type` (string, обязательное): Тип уведомления. Поддерживаемые значения:
+        *   `file`: Запись уведомления в файл.
+        *   `email`: Отправка уведомления по электронной почте (в разработке).
+        *   `slack`: Отправка уведомления в Slack (в разработке).
+        *   `telegram`: Отправка уведомления в Telegram (в разработке).
+    *   `file_notification` (object, если `notify.type: "file"`):
+        *   `file_path` (string, обязательное): Путь к файлу, в который будет записано уведомление.
+        *   `message` (string, обязательное): Шаблон сообщения. Можно использовать переменные:
+            *   `{{.TaskID}}`: ID выполненной задачи.
+            *   `{{.Date}}`: Дата и время выполнения задачи (в формате RFC3339).
+            *   `{{.Data}}`: Результат (вывод) выполнения задачи.
+        *   `append` (bool, опциональное): Если `true`, сообщение будет добавлено в конец файла. Если `false` (по умолчанию), файл будет перезаписан.
+    *   `email_notification` (object, если `notify.type: "email"`): (В разработке)
+        *   `to` (list of strings, обязательное): Список адресатов.
+        *   `subject` (string, обязательное): Тема письма.
+        *   `body` (string, обязательное): Шаблон тела письма (поддерживает те же переменные, что и `file_notification.message`).
+    *   `slack_notification` (object, если `notify.type: "slack"`): (В разработке)
+        *   `webhook_url` (string, обязательное): URL Webhook для Slack.
+        *   `channel` (string, опциональное): Канал Slack (если не указан, используется канал по умолчанию для Webhook).
+        *   `message` (string, обязательное): Шаблон сообщения (поддерживает те же переменные).
+    *   `telegram_notification` (object, если `notify.type: "telegram"`): (В разработке)
+        *   `bot_token` (string, обязательное): Токен Telegram бота.
+        *   `chat_id` (string, обязательное): ID чата или пользователя в Telegram.
+        *   `message` (string, обязательное): Шаблон сообщения (поддерживает те же переменные).
 
 ## Логирование
 
@@ -186,11 +226,11 @@ action:
 
 ### `tasks/task2-http-get.yml`
 
-Эта задача выполнит GET-запрос к `httpbin.org` каждую минуту.
+Эта задача выполнит GET-запрос к `httpbin.org` каждую минуту и отправит уведомление в файл.
 
 ```yaml
 id: "task2-http-get"
-description: "Задача для выполнения HTTP GET запроса."
+description: "Задача для выполнения HTTP GET запроса и отправки уведомления в файл."
 triggers:
   - type: "schedule"
     schedule: "0 */1 * * * *" # Каждую минуту
@@ -201,6 +241,12 @@ action:
     method: "GET"
     headers:
       X-Custom-Header: "GoTaskManager"
+notify:
+  - type: "file"
+    file_notification:
+      file_path: "/tmp/task2_http_alerts.log"
+      message: "HTTP GET Task {{.TaskID}} completed at {{.Date}}. Output: {{.Data}}"
+      append: true
 ```
 
 ### `tasks/task3-dependent-success.yml`
@@ -275,7 +321,51 @@ action:
     args: ["10"] # Команда будет спать 10 секунд
 ```
 
-После создания этих файлов и запуска `taskmanager`, вы увидите логи их выполнения в `app.log`.
+### `tasks/test-all-notifications.yaml`
+
+Этот пример демонстрирует конфигурацию для различных типов уведомлений (в настоящее время реализован только `file`).
+
+```yaml
+id: "test-all-notifications-task"
+description: "Тестовая задача для проверки всех типов уведомлений."
+max_retries: 0
+triggers:
+  - type: "schedule"
+    schedule: "*/30 * * * * *" # Каждые 30 секунд для тестирования
+action:
+  type: "command"
+  command:
+    path: "echo"
+    args:
+      - "Это тестовый вывод для задачи test-all-notifications-task"
+      - "Дата выполнения: $(date)"
+notify:
+  - type: "file"
+    file_notification:
+      file_path: "/tmp/test_task_alerts.log"
+      message: "ЗАДАЧА ВЫПОЛНЕНА: ID={{.TaskID}}, Дата={{.Date}}, Результат={{.Data}}"
+      append: false
+  - type: "email"
+    email_notification:
+      to:
+        - "user1@example.com"
+        - "user2@example.com"
+      subject: "Уведомление о задаче: {{.TaskID}}"
+      body: "Задача {{.TaskID}} успешно завершена {{.Date}}.\\nРезультат:\\n{{.Data}}"
+  - type: "slack"
+    slack_notification:
+      webhook_url: "https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK_URL"
+      channel: "#alerts"
+      message: ":tada: Задача *{{.TaskID}}* выполнена!\\n_Дата_: {{.Date}}\\n_Результат_: ```{{.Data}}```"
+  - type: "telegram"
+    telegram_notification:
+      bot_token: "YOUR_TELEGRAM_BOT_TOKEN"
+      chat_id: "YOUR_TELEGRAM_CHAT_ID"
+      message: "✅ Задача выполнена: {{.TaskID}}\\nДата: {{.Date}}\\nВывод: {{.Data}}"
+
+```
+
+После создания этих файлов и запуска `taskmanager`, вы увидите логи их выполнения в `app.log`. Уведомления типа `file` будут записываться в указанные файлы.
 
 ## Сборка и запуск основного приложения (`cmd/main.go`)
 
@@ -354,3 +444,7 @@ go get gopkg.in/yaml.v3
 go get github.com/fsnotify/fsnotify
 ```
 Выполните `go mod tidy` после добавления зависимостей.
+Дополнительные зависимости для уведомлений (если будете реализовывать email, slack, telegram):
+*   Для Email (например, `net/smtp` уже в стандартной библиотеке, но могут понадобиться сторонние для удобства).
+*   Для Slack (например, `github.com/slack-go/slack`).
+*   Для Telegram (например, `github.com/go-telegram-bot-api/telegram-bot-api/v5`).
