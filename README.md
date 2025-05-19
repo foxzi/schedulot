@@ -15,7 +15,10 @@
     *   Реализация каждого типа уведомлений в виде плагина.
     *   Использование шаблонов сообщений с переменными (`{{.TaskID}}`, `{{.Date}}`, `{{.Data}}`) для вставки динамических данных из контекста выполнения задачи.
 *   Параллельное выполнение задач.
-*   Логирование результатов выполнения задач.
+*   **Логирование результатов выполнения задач:**
+    *   Запись логов в файл.
+    *   Вывод логов в стандартный вывод (stdout).
+    *   Настройка режима логирования через параметры командной строки.
 *   Настройка максимального количества повторных попыток и таймаутов для задач.
 *   **Динамическая перезагрузка задач:** Автоматическое обнаружение изменений (создание, обновление, удаление) в файлах задач в указанной директории и соответствующая перезагрузка/обновление задач в планировщике без перезапуска приложения.
 *   **Валидация конфигурации задач:** Возможность запуска приложения с флагом для проверки синтаксиса и корректности файлов конфигурации задач.
@@ -76,7 +79,8 @@ gotask2/
         ```
 
     Приложение поддерживает следующие флаги командной строки:
-    *   `-logfile <путь>`: Путь к файлу логов (по умолчанию: `app.log`).
+    *   `-logoutput <путь>`: Путь к файлу логов (если `-logmode` установлен в `file`, по умолчанию: `app.log`) или `stdout` (если `-logmode` установлен в `stdout`).
+    *   `-logmode <режим>`: Режим логирования: `file` или `stdout` (по умолчанию: `file`).
     *   `-tasksdir <путь>`: Директория, содержащая YAML файлы задач (по умолчанию: `./tasks`).
     *   `-validate`: Если указан, приложение проверит конфигурацию задач в `tasksdir` и завершит работу.
 
@@ -85,9 +89,9 @@ gotask2/
         ```bash
         ./taskmanager
         ```
-    *   Запуск с указанием директории задач и файла логов:
+    *   Запуск с указанием директории задач и файла логов (режим file по умолчанию):
         ```bash
-        ./taskmanager -tasksdir /etc/myapp/tasks -logfile /var/log/myapp.log
+        ./taskmanager -tasksdir /etc/myapp/tasks -logoutput /var/log/myapp.log
         ```
     *   Запуск в режиме валидации задач:
         ```bash
@@ -96,6 +100,10 @@ gotask2/
         Или с указанием конкретной директории для валидации:
         ```bash
         ./taskmanager -validate -tasksdir ./my_specific_tasks
+        ```
+    *   Запуск с логированием в stdout:
+        ```bash
+        ./taskmanager -logmode stdout
         ```
 
     По умолчанию приложение будет искать задачи в директории `./tasks/`, логировать в `app.log` и отслеживать изменения в директории задач для автоматической перезагрузки.
@@ -201,7 +209,26 @@ notify:
 
 ## Логирование
 
-Все действия, запуск задач, результаты выполнения и ошибки логируются в файл `app.log` в корневой директории проекта.
+Все действия, запуск задач, результаты выполнения и ошибки логируются.
+По умолчанию логи записываются в файл `app.log` в корневой директории проекта.
+Можно настроить вывод логов в стандартный вывод (консоль) с помощью флага `-logmode stdout`.
+
+**Примеры настройки логирования:**
+
+*   Логирование в файл (по умолчанию):
+    ```bash
+    ./taskmanager
+    # или явно
+    ./taskmanager -logmode file -logoutput app.log
+    ```
+*   Логирование в stdout:
+    ```bash
+    ./taskmanager -logmode stdout
+    ```
+*   Логирование в другой файл:
+    ```bash
+    ./taskmanager -logmode file -logoutput /var/log/taskmanager.log
+    ```
 
 ## Примеры задач
 
@@ -390,50 +417,42 @@ import (
 )
 
 const (
-	logFilePath    = "app.log"
+	defaultLogOutput   = "app.log"
+	defaultLogMode     = "file"
 	tasksDirPath   = "./tasks"
 )
 
 func main() {
-	appLogger, err := logger.New(logFilePath)
-	if (err != nil) {
-		fmt.Printf("Failed to initialize logger: %v\n", err)
+	logOutput := flag.String("logoutput", defaultLogOutput, "Log output path (if mode is 'file') or 'stdout'.")
+	logModeStr := flag.String("logmode", defaultLogMode, "Log mode: 'file' or 'stdout'.")
+	// ... остальной код main.go ...
+
+	var currentLogMode logger.LogMode
+	switch strings.ToLower(*logModeStr) {
+	case "file":
+		currentLogMode = logger.LogModeFile
+	case "stdout":
+		currentLogMode = logger.LogModeStdout
+	default:
+		fmt.Printf("Invalid log mode: %s. Using default '%s'.\\n", *logModeStr, defaultLogMode)
+		currentLogMode = logger.LogModeFile // или logger.LogModeStdout, в зависимости от предпочтений
+	}
+
+	appLogger, err := logger.New(*logOutput, currentLogMode)
+	if err != nil {
+		fmt.Printf("Failed to initialize logger: %v\\n\", err)
 		os.Exit(1)
 	}
-	appLogger.Info("Main", "Application starting...")
+	appLogger.Info(\"Main\", \"Application starting...\")
 
-	taskExecutor := executor.New(appLogger)
-	taskScheduler := scheduler.New(taskExecutor, appLogger)
-
-	loadedTasks, err := config.LoadTasksFromDir(tasksDirPath)
-	if (err != nil) {
-		appLogger.Error("Main", "Failed to load tasks", err)
-		os.Exit(1)
-	}
-
-	if len(loadedTasks) == 0 {
-		appLogger.Info("Main", "No tasks found in %s. The application will run but will not schedule any tasks.", tasksDirPath)
+	if currentLogMode == logger.LogModeFile {
+		appLogger.Info(\"Main\", \"Logging to file: %s\", *logOutput)
 	} else {
-		for _, t := range loadedTasks {
-			if err := taskScheduler.AddTask(t); err != nil {
-				appLogger.Error("Main", fmt.Sprintf("Failed to add task %s", t.ID), err)
-			}
-		}
+		appLogger.Info(\"Main\", \"Logging to stdout\")
 	}
 
-	taskScheduler.Start()
-	appLogger.Info("Main", "Task scheduler started. Press Ctrl+C to exit.")
-
-	// Graceful shutdown
-	sigChan := make(chan os.Signal, 1)
-	signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
-	<-sigChan
-
-	appLogger.Info("Main", "Shutdown signal received. Stopping scheduler...")
-	taskScheduler.Stop()
-	appLogger.Info("Main", "Application stopped.")
+	// ... остальная инициализация и запуск ...
 }
-
 ```
 
 Не забудьте создать файл `cmd/main.go` с этим содержимым, если его еще нет.

@@ -2,28 +2,49 @@ package logger
 
 import (
 	"fmt"
+	"io"
 	"log"
 	"os"
 	"time"
+)
+
+// LogMode type to define logging destination
+type LogMode string
+
+const (
+	// LogModeFile writes logs to a file.
+	LogModeFile LogMode = "file"
+	// LogModeStdout writes logs to standard output.
+	LogModeStdout LogMode = "stdout"
 )
 
 // Logger defines a simple logger for the application.
 type Logger struct {
 	infoLogger  *log.Logger
 	errorLogger *log.Logger
+	logMode     LogMode
 }
 
 // New creates a new Logger instance.
-func New(logFilePath string) (*Logger, error) {
-	file, err := os.OpenFile(logFilePath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
-	if err != nil {
-		return nil, fmt.Errorf("failed to open log file %s: %w", logFilePath, err)
+func New(logOutput string, mode LogMode) (*Logger, error) {
+	var output io.Writer
+
+	if mode == LogModeFile {
+		file, err := os.OpenFile(logOutput, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
+		if err != nil {
+			return nil, fmt.Errorf("failed to open log file %s: %w", logOutput, err)
+		}
+		output = file
+	} else if mode == LogModeStdout {
+		output = os.Stdout
+	} else {
+		return nil, fmt.Errorf("invalid log mode: %s", mode)
 	}
 
-	infoLogger := log.New(file, "INFO: ", log.Ldate|log.Ltime|log.Lshortfile)
-	errorLogger := log.New(file, "ERROR: ", log.Ldate|log.Ltime|log.Lshortfile)
+	infoLogger := log.New(output, "INFO: ", log.Ldate|log.Ltime|log.Lshortfile)
+	errorLogger := log.New(output, "ERROR: ", log.Ldate|log.Ltime|log.Lshortfile)
 
-	return &Logger{infoLogger: infoLogger, errorLogger: errorLogger}, nil
+	return &Logger{infoLogger: infoLogger, errorLogger: errorLogger, logMode: mode}, nil
 }
 
 // Info logs an informational message.

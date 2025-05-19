@@ -1,0 +1,170 @@
+INFO: 2025/05/19 14:52:11 logger.go:52: TaskID: Main - Application starting...
+INFO: 2025/05/19 14:52:11 logger.go:52: TaskID: Main - Using tasks directory: /home/piligrim/Work/golang/gotask2/tasks
+INFO: 2025/05/19 14:52:11 logger.go:52: TaskID: Main - Using log file: stdout
+INFO: 2025/05/19 14:52:11 logger.go:52: TaskID: Scheduler - Starting scheduler...
+INFO: 2025/05/19 14:52:11 logger.go:52: TaskID: Scheduler - Cron scheduler started.
+INFO: 2025/05/19 14:52:11 logger.go:52: TaskID: Scheduler - Performing initial load and scheduling of tasks from directory: /home/piligrim/Work/golang/gotask2/tasks
+INFO: 2025/05/19 14:52:11 logger.go:52: TaskID: Scheduler - Listening for task completions to trigger dependent tasks and notifications.
+INFO: 2025/05/19 14:52:11 logger.go:52: TaskID: SchedulerWatcher - Started watching directory: /home/piligrim/Work/golang/gotask2/tasks
+ERROR: 2025/05/19 14:52:11 logger.go:58: TaskID: ConfigLoader - Failed to load task from /home/piligrim/Work/golang/gotask2/tasks/curl-test.yaml: failed to unmarshal task from /home/piligrim/Work/golang/gotask2/tasks/curl-test.yaml: yaml: unmarshal errors:
+  line 14: cannot unmarshal !!map into []notification.NotificationConfig
+INFO: 2025/05/19 14:52:11 logger.go:52: TaskID: task1-echo-schedule - Updating existing task definition in scheduler map
+INFO: 2025/05/19 14:52:11 logger.go:52: TaskID: task1-echo-schedule - Task added/updated in scheduler's internal map from file /home/piligrim/Work/golang/gotask2/tasks/task1-echo-schedule.yml
+INFO: 2025/05/19 14:52:11 logger.go:52: TaskID: task1-echo-schedule - Task scheduled with cron: */15 * * * * *, EntryID: 1
+INFO: 2025/05/19 14:52:11 logger.go:52: TaskID: test-all-notifications-task - Updating existing task definition in scheduler map
+INFO: 2025/05/19 14:52:11 logger.go:52: TaskID: test-all-notifications-task - Task added/updated in scheduler's internal map from file /home/piligrim/Work/golang/gotask2/tasks/test-all-notifications.yaml
+INFO: 2025/05/19 14:52:11 logger.go:52: TaskID: test-all-notifications-task - Task scheduled with cron: */10 * * * * *, EntryID: 2
+INFO: 2025/05/19 14:52:11 logger.go:52: TaskID: Main - Task scheduler started. Press Ctrl+C to exit.
+INFO: 2025/05/19 14:52:15 logger.go:52: TaskID: task1-echo-schedule - Cron triggered for task
+INFO: 2025/05/19 14:52:15 logger.go:52: TaskID: task1-echo-schedule - Starting task execution
+INFO: 2025/05/19 14:52:15 logger.go:52: TaskID: task1-echo-schedule - Execution Result - TaskID: task1-echo-schedule, Status: SUCCESS, Duration: 1.770726ms, Output: Привет от task1! Время: $(date)
+INFO: 2025/05/19 14:52:15 logger.go:52: TaskID: task1-echo-schedule - Scheduler: Task completed. Success: true, Output: Привет от task1! Время: $(date)
+INFO: 2025/05/19 14:52:15 logger.go:52: TaskID: task1-echo-schedule - Scheduler: No notifications configured for this task.
+INFO: 2025/05/19 14:52:20 logger.go:52: TaskID: test-all-notifications-task - Cron triggered for task
+INFO: 2025/05/19 14:52:20 logger.go:52: TaskID: test-all-notifications-task - Starting task execution
+INFO: 2025/05/19 14:52:20 logger.go:52: TaskID: test-all-notifications-task - Execution Result - TaskID: test-all-notifications-task, Status: SUCCESS, Duration: 1.739034ms, Output: Это тестовые данные из задачи для оповещения.
+INFO: 2025/05/19 14:52:20 logger.go:52: TaskID: test-all-notifications-task - Scheduler: Task completed. Success: true, Output: Это тестовые данные из задачи для оповещения.
+INFO: 2025/05/19 14:52:20 logger.go:52: TaskID: test-all-notifications-task - Scheduler: Processing 1 notification(s) for task
+INFO: 2025/05/19 14:52:20 logger.go:52: TaskID: test-all-notifications-task - Scheduler: Attempting notification type: file
+INFO: 2025/05/19 14:52:20 logger.go:52: TaskID: test-all-notifications-task - Scheduler: Successfully sent file notification
+INFO: 2025/05/19 14:52:30 logger.go:52: TaskID: task1-echo-schedule - Cron triggered for task
+INFO: 2025/05/19 14:52:30 logger.go:52: TaskID: test-all-notifications-task - Cron triggered for task
+INFO: 2025/05/19 14:52:30 logger.go:52: TaskID: task1-echo-schedule - Starting task execution
+INFO: 2025/05/19 14:52:30 logger.go:52: TaskID: test-all-notifications-task - Starting task execution
+INFO: 2025/05/19 14:52:30 logger.go:52: TaskID: task1-echo-schedule - Execution Result - TaskID: task1-echo-schedule, Status: SUCCESS, Duration: 1.928073ms, Output: Привет от task1! Время: $(date)
+INFO: 2025/05/19 14:52:30 logger.go:52: TaskID: task1-echo-schedule - Scheduler: Task completed. Success: true, Output: Привет от task1! Время: $(date)
+INFO: 2025/05/19 14:52:30 logger.go:52: TaskID: test-all-notifications-task - Execution Result - TaskID: test-all-notifications-task, Status: SUCCESS, Duration: 1.965362ms, Output: Это тестовые данные из задачи для оповещения.
+INFO: 2025/05/19 14:52:30 logger.go:52: TaskID: task1-echo-schedule - Scheduler: No notifications configured for this task.
+INFO: 2025/05/19 14:52:30 logger.go:52: TaskID: test-all-notifications-task - Scheduler: Task completed. Success: true, Output: Это тестовые данные из задачи для оповещения.
+INFO: 2025/05/19 14:52:30 logger.go:52: TaskID: test-all-notifications-task - Scheduler: Processing 1 notification(s) for task
+INFO: 2025/05/19 14:52:30 logger.go:52: TaskID: test-all-notifications-task - Scheduler: Attempting notification type: file
+INFO: 2025/05/19 14:52:30 logger.go:52: TaskID: test-all-notifications-task - Scheduler: Successfully sent file notification
+INFO: 2025/05/19 14:52:36 logger.go:52: TaskID: Main - Shutdown signal received. Stopping scheduler...
+INFO: 2025/05/19 14:52:36 logger.go:52: TaskID: Scheduler - Stopping scheduler...
+INFO: 2025/05/19 14:52:36 logger.go:52: TaskID: SchedulerWatcher - Watcher errors channel closed.
+INFO: 2025/05/19 14:52:36 logger.go:52: TaskID: Scheduler - Cron scheduler stopped.
+INFO: 2025/05/19 14:52:36 logger.go:52: TaskID: Scheduler - Stopping task completion listener.
+INFO: 2025/05/19 14:52:36 logger.go:52: TaskID: Scheduler - Scheduler stopped gracefully.
+INFO: 2025/05/19 14:52:36 logger.go:52: TaskID: Main - Application stopped.
+INFO: 2025/05/19 14:52:39 logger.go:52: TaskID: Main - Application starting...
+INFO: 2025/05/19 14:52:39 logger.go:52: TaskID: Main - Using tasks directory: /home/piligrim/Work/golang/gotask2/tasks
+INFO: 2025/05/19 14:52:39 logger.go:52: TaskID: Main - Using log file: stdout
+INFO: 2025/05/19 14:52:39 logger.go:52: TaskID: Scheduler - Starting scheduler...
+INFO: 2025/05/19 14:52:39 logger.go:52: TaskID: Scheduler - Cron scheduler started.
+INFO: 2025/05/19 14:52:39 logger.go:52: TaskID: Scheduler - Performing initial load and scheduling of tasks from directory: /home/piligrim/Work/golang/gotask2/tasks
+INFO: 2025/05/19 14:52:39 logger.go:52: TaskID: Scheduler - Listening for task completions to trigger dependent tasks and notifications.
+INFO: 2025/05/19 14:52:39 logger.go:52: TaskID: SchedulerWatcher - Started watching directory: /home/piligrim/Work/golang/gotask2/tasks
+ERROR: 2025/05/19 14:52:39 logger.go:58: TaskID: ConfigLoader - Failed to load task from /home/piligrim/Work/golang/gotask2/tasks/curl-test.yaml: failed to unmarshal task from /home/piligrim/Work/golang/gotask2/tasks/curl-test.yaml: yaml: unmarshal errors:
+  line 14: cannot unmarshal !!map into []notification.NotificationConfig
+INFO: 2025/05/19 14:52:39 logger.go:52: TaskID: task1-echo-schedule - Updating existing task definition in scheduler map
+INFO: 2025/05/19 14:52:39 logger.go:52: TaskID: task1-echo-schedule - Task added/updated in scheduler's internal map from file /home/piligrim/Work/golang/gotask2/tasks/task1-echo-schedule.yml
+INFO: 2025/05/19 14:52:39 logger.go:52: TaskID: task1-echo-schedule - Task scheduled with cron: */15 * * * * *, EntryID: 1
+INFO: 2025/05/19 14:52:39 logger.go:52: TaskID: test-all-notifications-task - Updating existing task definition in scheduler map
+INFO: 2025/05/19 14:52:39 logger.go:52: TaskID: test-all-notifications-task - Task added/updated in scheduler's internal map from file /home/piligrim/Work/golang/gotask2/tasks/test-all-notifications.yaml
+INFO: 2025/05/19 14:52:39 logger.go:52: TaskID: test-all-notifications-task - Task scheduled with cron: */10 * * * * *, EntryID: 2
+INFO: 2025/05/19 14:52:39 logger.go:52: TaskID: Main - Task scheduler started. Press Ctrl+C to exit.
+INFO: 2025/05/19 14:52:40 logger.go:52: TaskID: test-all-notifications-task - Cron triggered for task
+INFO: 2025/05/19 14:52:40 logger.go:52: TaskID: test-all-notifications-task - Starting task execution
+INFO: 2025/05/19 14:52:40 logger.go:52: TaskID: test-all-notifications-task - Execution Result - TaskID: test-all-notifications-task, Status: SUCCESS, Duration: 1.814524ms, Output: Это тестовые данные из задачи для оповещения.
+INFO: 2025/05/19 14:52:40 logger.go:52: TaskID: test-all-notifications-task - Scheduler: Task completed. Success: true, Output: Это тестовые данные из задачи для оповещения.
+INFO: 2025/05/19 14:52:40 logger.go:52: TaskID: test-all-notifications-task - Scheduler: Processing 1 notification(s) for task
+INFO: 2025/05/19 14:52:40 logger.go:52: TaskID: test-all-notifications-task - Scheduler: Attempting notification type: file
+INFO: 2025/05/19 14:52:40 logger.go:52: TaskID: test-all-notifications-task - Scheduler: Successfully sent file notification
+INFO: 2025/05/19 14:52:45 logger.go:52: TaskID: task1-echo-schedule - Cron triggered for task
+INFO: 2025/05/19 14:52:45 logger.go:52: TaskID: task1-echo-schedule - Starting task execution
+INFO: 2025/05/19 14:52:45 logger.go:52: TaskID: task1-echo-schedule - Execution Result - TaskID: task1-echo-schedule, Status: SUCCESS, Duration: 1.715362ms, Output: Привет от task1! Время: $(date)
+INFO: 2025/05/19 14:52:45 logger.go:52: TaskID: task1-echo-schedule - Scheduler: Task completed. Success: true, Output: Привет от task1! Время: $(date)
+INFO: 2025/05/19 14:52:45 logger.go:52: TaskID: task1-echo-schedule - Scheduler: No notifications configured for this task.
+INFO: 2025/05/19 14:52:50 logger.go:52: TaskID: test-all-notifications-task - Cron triggered for task
+INFO: 2025/05/19 14:52:50 logger.go:52: TaskID: test-all-notifications-task - Starting task execution
+INFO: 2025/05/19 14:52:50 logger.go:52: TaskID: test-all-notifications-task - Execution Result - TaskID: test-all-notifications-task, Status: SUCCESS, Duration: 1.776347ms, Output: Это тестовые данные из задачи для оповещения.
+INFO: 2025/05/19 14:52:50 logger.go:52: TaskID: test-all-notifications-task - Scheduler: Task completed. Success: true, Output: Это тестовые данные из задачи для оповещения.
+INFO: 2025/05/19 14:52:50 logger.go:52: TaskID: test-all-notifications-task - Scheduler: Processing 1 notification(s) for task
+INFO: 2025/05/19 14:52:50 logger.go:52: TaskID: test-all-notifications-task - Scheduler: Attempting notification type: file
+INFO: 2025/05/19 14:52:50 logger.go:52: TaskID: test-all-notifications-task - Scheduler: Successfully sent file notification
+INFO: 2025/05/19 14:52:53 logger.go:52: TaskID: Main - Shutdown signal received. Stopping scheduler...
+INFO: 2025/05/19 14:52:53 logger.go:52: TaskID: Scheduler - Stopping scheduler...
+INFO: 2025/05/19 14:52:53 logger.go:52: TaskID: SchedulerWatcher - Watcher errors channel closed.
+INFO: 2025/05/19 14:52:53 logger.go:52: TaskID: Scheduler - Cron scheduler stopped.
+INFO: 2025/05/19 14:52:53 logger.go:52: TaskID: Scheduler - Stopping task completion listener.
+INFO: 2025/05/19 14:52:53 logger.go:52: TaskID: Scheduler - Scheduler stopped gracefully.
+INFO: 2025/05/19 14:52:53 logger.go:52: TaskID: Main - Application stopped.
+INFO: 2025/05/19 14:52:56 logger.go:52: TaskID: Main - Application starting...
+INFO: 2025/05/19 14:52:56 logger.go:52: TaskID: Main - Using tasks directory: /home/piligrim/Work/golang/gotask2/tasks
+INFO: 2025/05/19 14:52:56 logger.go:52: TaskID: Main - Using log file: stdout
+INFO: 2025/05/19 14:52:56 logger.go:52: TaskID: Scheduler - Starting scheduler...
+INFO: 2025/05/19 14:52:56 logger.go:52: TaskID: Scheduler - Cron scheduler started.
+INFO: 2025/05/19 14:52:56 logger.go:52: TaskID: Scheduler - Performing initial load and scheduling of tasks from directory: /home/piligrim/Work/golang/gotask2/tasks
+INFO: 2025/05/19 14:52:56 logger.go:52: TaskID: SchedulerWatcher - Started watching directory: /home/piligrim/Work/golang/gotask2/tasks
+INFO: 2025/05/19 14:52:56 logger.go:52: TaskID: Scheduler - Listening for task completions to trigger dependent tasks and notifications.
+ERROR: 2025/05/19 14:52:56 logger.go:58: TaskID: ConfigLoader - Failed to load task from /home/piligrim/Work/golang/gotask2/tasks/curl-test.yaml: failed to unmarshal task from /home/piligrim/Work/golang/gotask2/tasks/curl-test.yaml: yaml: unmarshal errors:
+  line 14: cannot unmarshal !!map into []notification.NotificationConfig
+INFO: 2025/05/19 14:52:56 logger.go:52: TaskID: task1-echo-schedule - Updating existing task definition in scheduler map
+INFO: 2025/05/19 14:52:56 logger.go:52: TaskID: task1-echo-schedule - Task added/updated in scheduler's internal map from file /home/piligrim/Work/golang/gotask2/tasks/task1-echo-schedule.yml
+INFO: 2025/05/19 14:52:56 logger.go:52: TaskID: task1-echo-schedule - Task scheduled with cron: */15 * * * * *, EntryID: 1
+INFO: 2025/05/19 14:52:56 logger.go:52: TaskID: test-all-notifications-task - Updating existing task definition in scheduler map
+INFO: 2025/05/19 14:52:56 logger.go:52: TaskID: test-all-notifications-task - Task added/updated in scheduler's internal map from file /home/piligrim/Work/golang/gotask2/tasks/test-all-notifications.yaml
+INFO: 2025/05/19 14:52:56 logger.go:52: TaskID: test-all-notifications-task - Task scheduled with cron: */10 * * * * *, EntryID: 2
+INFO: 2025/05/19 14:52:56 logger.go:52: TaskID: Main - Task scheduler started. Press Ctrl+C to exit.
+INFO: 2025/05/19 14:53:00 logger.go:52: TaskID: test-all-notifications-task - Cron triggered for task
+INFO: 2025/05/19 14:53:00 logger.go:52: TaskID: task1-echo-schedule - Cron triggered for task
+INFO: 2025/05/19 14:53:00 logger.go:52: TaskID: test-all-notifications-task - Starting task execution
+INFO: 2025/05/19 14:53:00 logger.go:52: TaskID: task1-echo-schedule - Starting task execution
+INFO: 2025/05/19 14:53:00 logger.go:52: TaskID: test-all-notifications-task - Execution Result - TaskID: test-all-notifications-task, Status: SUCCESS, Duration: 1.6969ms, Output: Это тестовые данные из задачи для оповещения.
+INFO: 2025/05/19 14:53:00 logger.go:52: TaskID: task1-echo-schedule - Execution Result - TaskID: task1-echo-schedule, Status: SUCCESS, Duration: 1.723033ms, Output: Привет от task1! Время: $(date)
+INFO: 2025/05/19 14:53:00 logger.go:52: TaskID: test-all-notifications-task - Scheduler: Task completed. Success: true, Output: Это тестовые данные из задачи для оповещения.
+INFO: 2025/05/19 14:53:00 logger.go:52: TaskID: test-all-notifications-task - Scheduler: Processing 1 notification(s) for task
+INFO: 2025/05/19 14:53:00 logger.go:52: TaskID: test-all-notifications-task - Scheduler: Attempting notification type: file
+INFO: 2025/05/19 14:53:00 logger.go:52: TaskID: test-all-notifications-task - Scheduler: Successfully sent file notification
+INFO: 2025/05/19 14:53:00 logger.go:52: TaskID: task1-echo-schedule - Scheduler: Task completed. Success: true, Output: Привет от task1! Время: $(date)
+INFO: 2025/05/19 14:53:00 logger.go:52: TaskID: task1-echo-schedule - Scheduler: No notifications configured for this task.
+INFO: 2025/05/19 14:53:10 logger.go:52: TaskID: test-all-notifications-task - Cron triggered for task
+INFO: 2025/05/19 14:53:10 logger.go:52: TaskID: test-all-notifications-task - Starting task execution
+INFO: 2025/05/19 14:53:10 logger.go:52: TaskID: test-all-notifications-task - Execution Result - TaskID: test-all-notifications-task, Status: SUCCESS, Duration: 970.668µs, Output: Это тестовые данные из задачи для оповещения.
+INFO: 2025/05/19 14:53:10 logger.go:52: TaskID: test-all-notifications-task - Scheduler: Task completed. Success: true, Output: Это тестовые данные из задачи для оповещения.
+INFO: 2025/05/19 14:53:10 logger.go:52: TaskID: test-all-notifications-task - Scheduler: Processing 1 notification(s) for task
+INFO: 2025/05/19 14:53:10 logger.go:52: TaskID: test-all-notifications-task - Scheduler: Attempting notification type: file
+INFO: 2025/05/19 14:53:10 logger.go:52: TaskID: test-all-notifications-task - Scheduler: Successfully sent file notification
+INFO: 2025/05/19 14:53:15 logger.go:52: TaskID: task1-echo-schedule - Cron triggered for task
+INFO: 2025/05/19 14:53:15 logger.go:52: TaskID: task1-echo-schedule - Starting task execution
+INFO: 2025/05/19 14:53:15 logger.go:52: TaskID: task1-echo-schedule - Execution Result - TaskID: task1-echo-schedule, Status: SUCCESS, Duration: 2.015267ms, Output: Привет от task1! Время: $(date)
+INFO: 2025/05/19 14:53:15 logger.go:52: TaskID: task1-echo-schedule - Scheduler: Task completed. Success: true, Output: Привет от task1! Время: $(date)
+INFO: 2025/05/19 14:53:15 logger.go:52: TaskID: task1-echo-schedule - Scheduler: No notifications configured for this task.
+INFO: 2025/05/19 14:53:20 logger.go:52: TaskID: test-all-notifications-task - Cron triggered for task
+INFO: 2025/05/19 14:53:20 logger.go:52: TaskID: test-all-notifications-task - Starting task execution
+INFO: 2025/05/19 14:53:20 logger.go:52: TaskID: test-all-notifications-task - Execution Result - TaskID: test-all-notifications-task, Status: SUCCESS, Duration: 1.650703ms, Output: Это тестовые данные из задачи для оповещения.
+INFO: 2025/05/19 14:53:20 logger.go:52: TaskID: test-all-notifications-task - Scheduler: Task completed. Success: true, Output: Это тестовые данные из задачи для оповещения.
+INFO: 2025/05/19 14:53:20 logger.go:52: TaskID: test-all-notifications-task - Scheduler: Processing 1 notification(s) for task
+INFO: 2025/05/19 14:53:20 logger.go:52: TaskID: test-all-notifications-task - Scheduler: Attempting notification type: file
+INFO: 2025/05/19 14:53:20 logger.go:52: TaskID: test-all-notifications-task - Scheduler: Successfully sent file notification
+INFO: 2025/05/19 14:53:21 logger.go:52: TaskID: Main - Shutdown signal received. Stopping scheduler...
+INFO: 2025/05/19 14:53:21 logger.go:52: TaskID: Scheduler - Stopping scheduler...
+INFO: 2025/05/19 14:53:21 logger.go:52: TaskID: SchedulerWatcher - Watcher errors channel closed.
+INFO: 2025/05/19 14:53:21 logger.go:52: TaskID: Scheduler - Cron scheduler stopped.
+INFO: 2025/05/19 14:53:21 logger.go:52: TaskID: Scheduler - Stopping task completion listener.
+INFO: 2025/05/19 14:53:21 logger.go:52: TaskID: Scheduler - Scheduler stopped gracefully.
+INFO: 2025/05/19 14:53:21 logger.go:52: TaskID: Main - Application stopped.
+INFO: 2025/05/19 14:53:30 logger.go:52: TaskID: Main - Application starting...
+INFO: 2025/05/19 14:53:30 logger.go:52: TaskID: Main - Using tasks directory: /home/piligrim/Work/golang/gotask2/tasks
+INFO: 2025/05/19 14:53:30 logger.go:52: TaskID: Main - Using log file: stdout
+INFO: 2025/05/19 14:53:30 logger.go:52: TaskID: Scheduler - Starting scheduler...
+INFO: 2025/05/19 14:53:30 logger.go:52: TaskID: Scheduler - Cron scheduler started.
+INFO: 2025/05/19 14:53:30 logger.go:52: TaskID: Scheduler - Performing initial load and scheduling of tasks from directory: /home/piligrim/Work/golang/gotask2/tasks
+INFO: 2025/05/19 14:53:30 logger.go:52: TaskID: Scheduler - Listening for task completions to trigger dependent tasks and notifications.
+INFO: 2025/05/19 14:53:30 logger.go:52: TaskID: SchedulerWatcher - Started watching directory: /home/piligrim/Work/golang/gotask2/tasks
+ERROR: 2025/05/19 14:53:30 logger.go:58: TaskID: ConfigLoader - Failed to load task from /home/piligrim/Work/golang/gotask2/tasks/curl-test.yaml: failed to unmarshal task from /home/piligrim/Work/golang/gotask2/tasks/curl-test.yaml: yaml: unmarshal errors:
+  line 14: cannot unmarshal !!map into []notification.NotificationConfig
+INFO: 2025/05/19 14:53:30 logger.go:52: TaskID: task1-echo-schedule - Updating existing task definition in scheduler map
+INFO: 2025/05/19 14:53:30 logger.go:52: TaskID: task1-echo-schedule - Task added/updated in scheduler's internal map from file /home/piligrim/Work/golang/gotask2/tasks/task1-echo-schedule.yml
+INFO: 2025/05/19 14:53:30 logger.go:52: TaskID: task1-echo-schedule - Task scheduled with cron: */15 * * * * *, EntryID: 1
+INFO: 2025/05/19 14:53:30 logger.go:52: TaskID: test-all-notifications-task - Updating existing task definition in scheduler map
+INFO: 2025/05/19 14:53:30 logger.go:52: TaskID: test-all-notifications-task - Task added/updated in scheduler's internal map from file /home/piligrim/Work/golang/gotask2/tasks/test-all-notifications.yaml
+INFO: 2025/05/19 14:53:30 logger.go:52: TaskID: test-all-notifications-task - Task scheduled with cron: */10 * * * * *, EntryID: 2
+INFO: 2025/05/19 14:53:30 logger.go:52: TaskID: Main - Task scheduler started. Press Ctrl+C to exit.
+INFO: 2025/05/19 14:53:33 logger.go:52: TaskID: Main - Shutdown signal received. Stopping scheduler...
+INFO: 2025/05/19 14:53:33 logger.go:52: TaskID: Scheduler - Stopping scheduler...
+INFO: 2025/05/19 14:53:33 logger.go:52: TaskID: SchedulerWatcher - Watcher errors channel closed.
+INFO: 2025/05/19 14:53:33 logger.go:52: TaskID: Scheduler - Stopping task completion listener.
+INFO: 2025/05/19 14:53:33 logger.go:52: TaskID: Scheduler - Cron scheduler stopped.
+INFO: 2025/05/19 14:53:33 logger.go:52: TaskID: Scheduler - Scheduler stopped gracefully.
+INFO: 2025/05/19 14:53:33 logger.go:52: TaskID: Main - Application stopped.

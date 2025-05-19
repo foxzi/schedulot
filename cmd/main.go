@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/signal"
 	"path/filepath"
+	"strings"
 	"syscall"
 
 	"github.com/piligrim/gotask2/pkg/config"
@@ -15,25 +16,42 @@ import (
 )
 
 const (
-	defaultLogFilePath  = "app.log"
+	defaultLogOutput    = "app.log"
+	defaultLogMode      = "file" // or "stdout"
 	defaultTasksDirPath = "./tasks"
 )
 
 func main() {
-	logFilePath := flag.String("logfile", defaultLogFilePath, "Path to the log file.")
+	logOutput := flag.String("logoutput", defaultLogOutput, "Log output path (if mode is 'file') or 'stdout'.")
+	logModeStr := flag.String("logmode", defaultLogMode, "Log mode: 'file' or 'stdout'.")
 	tasksDirPath := flag.String("tasksdir", defaultTasksDirPath, "Directory containing task YAML files.")
 	validateTasks := flag.Bool("validate", false, "Validate tasks in the tasks directory and exit.")
 	flag.Parse()
 
-	absTasksDirPath, err := filepath.Abs(*tasksDirPath)
+	var appLogger *logger.Logger
+	var err error
+
+	// Determine logger mode
+	var currentLogMode logger.LogMode
+	switch strings.ToLower(*logModeStr) {
+	case "file":
+		currentLogMode = logger.LogModeFile
+	case "stdout":
+		currentLogMode = logger.LogModeStdout
+	default:
+		fmt.Printf("Invalid log mode: %s. Using default '%s'.\n", *logModeStr, defaultLogMode)
+		currentLogMode = logger.LogModeFile // Or your preferred default
+	}
+
+	appLogger, err = logger.New(*logOutput, currentLogMode)
 	if err != nil {
-		fmt.Printf("Error getting absolute path for tasks directory: %v\n", err)
+		fmt.Printf("Failed to initialize logger: %v\n", err)
 		os.Exit(1)
 	}
 
-	appLogger, err := logger.New(*logFilePath)
+	absTasksDirPath, err := filepath.Abs(*tasksDirPath)
 	if err != nil {
-		fmt.Printf("Failed to initialize logger: %v\n", err)
+		appLogger.Error("Main", "Error getting absolute path for tasks directory", err)
 		os.Exit(1)
 	}
 
@@ -58,7 +76,11 @@ func main() {
 
 	appLogger.Info("Main", "Application starting...")
 	appLogger.Info("Main", "Using tasks directory: %s", absTasksDirPath)
-	appLogger.Info("Main", "Using log file: %s", *logFilePath)
+	if currentLogMode == logger.LogModeFile {
+		appLogger.Info("Main", "Using log file: %s", *logOutput)
+	} else {
+		appLogger.Info("Main", "Logging to stdout")
+	}
 
 	taskExecutor := executor.New(appLogger)
 	taskScheduler, err := scheduler.New(taskExecutor, appLogger, absTasksDirPath) // Pass absTasksDirPath
