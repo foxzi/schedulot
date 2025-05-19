@@ -8,6 +8,8 @@ import (
 // NotificationConfig represents the notification configuration in a task.
 type NotificationConfig struct {
 	Type                 string                     `yaml:"type"`
+	OnSuccess            bool                       `yaml:"on_success"`
+	OnFailure            bool                       `yaml:"on_failure"`
 	FileNotification     FileNotificationConfig     `yaml:"file_notification,omitempty"`
 	EmailNotification    EmailNotificationConfig    `yaml:"email_notification,omitempty"`
 	SlackNotification    SlackNotificationConfig    `yaml:"slack_notification,omitempty"`
@@ -54,6 +56,7 @@ type TemplateData struct {
 	TaskID string
 	Date   string
 	Data   string
+	Status string
 }
 
 // ProcessTemplate processes a message template with the given data.

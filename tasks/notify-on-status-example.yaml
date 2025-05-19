@@ -1,0 +1,38 @@
+id: "notify-on-status-example"
+description: "Пример задачи с уведомлениями по успеху или неудаче"
+max_retries: 1
+timeout: "5s"
+triggers:
+  - type: "schedule"
+    schedule: "*/20 * * * * *"  # Каждые 20 секунд
+action:
+  type: "command"
+  command:
+    path: "sh"
+    args:
+      - "-c"
+      - "echo 'Выполняется задача notify-on-status-example' && [ $RANDOM -gt 16000 ] || exit 1"  # 50% шанс успеха/неудачи
+
+notify:
+  - type: "file"
+    on_success: true  # Отправлять при успехе
+    on_failure: false # Не отправлять при неудаче
+    file_notification:
+      file_path: "/tmp/success_notifications.log"
+      message: "✅ ЗАДАЧА ВЫПОЛНЕНА УСПЕШНО: ID={{.TaskID}}, Время: {{.Date}}, Результат: {{.Data}}"
+      append: true
+  
+  - type: "file"
+    on_success: false  # Не отправлять при успехе
+    on_failure: true   # Отправлять при неудаче
+    file_notification:
+      file_path: "/tmp/failure_notifications.log"
+      message: "❌ ЗАДАЧА ЗАВЕРШИЛАСЬ С ОШИБКОЙ: ID={{.TaskID}}, Время: {{.Date}}\nОшибка: {{.Data}}"
+      append: true
+  
+  - type: "file"
+    # Без параметров on_success/on_failure - по умолчанию отправляется только при успехе
+    file_notification:
+      file_path: "/tmp/default_notification_behavior.log"
+      message: "Уведомление по умолчанию (только успех): Задача {{.TaskID}} завершена со статусом {{.Status}}"
+      append: true

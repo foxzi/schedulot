@@ -378,69 +378,88 @@ func (s *Scheduler) listenForTaskCompletions() {
 			s.logger.Info(update.TaskID, "Scheduler: Task completed. Success: %v, Output: %s", update.Success, update.Output)
 
 			// Process notifications for the completed task
-			if update.Success {
-				completedTask, exists := s.getTask(update.TaskID) // getTask is an internal helper
-				if !exists {
-					s.logger.Error(update.TaskID, "Scheduler: Task definition not found for notification processing", nil)
-					continue
+			completedTask, exists := s.getTask(update.TaskID) // getTask is an internal helper
+			if !exists {
+				s.logger.Error(update.TaskID, "Scheduler: Task definition not found for notification processing", nil)
+				continue
+			}
+
+			if completedTask.Notify != nil && len(completedTask.Notify) > 0 {
+				s.logger.Info(completedTask.ID, "Scheduler: Processing %d notification(s) for task", len(completedTask.Notify))
+
+				// Prepare data for notification.Notifier interface (map[string]interface{})
+				// The ProcessTemplate function in notification package uses notification.TemplateData struct.
+				// Notifier plugins will call ProcessTemplate with the correct struct.
+				notificationDataMap := map[string]interface{}{
+					"TaskID": completedTask.ID,
+					"Date":   time.Now().Format(time.RFC3339),
+					"Data":   update.Output,
+					"Status": map[bool]string{true: "SUCCESS", false: "FAILURE"}[update.Success],
 				}
 
-				if completedTask.Notify != nil && len(completedTask.Notify) > 0 {
-					s.logger.Info(completedTask.ID, "Scheduler: Processing %d notification(s) for task", len(completedTask.Notify))
+				for _, notifyCfg := range completedTask.Notify {
+					// Проверяем, должно ли уведомление быть отправлено в зависимости от статуса задачи
+					shouldSendNotification := false
 
-					// Prepare data for notification.Notifier interface (map[string]interface{})
-					// The ProcessTemplate function in notification package uses notification.TemplateData struct.
-					// Notifier plugins will call ProcessTemplate with the correct struct.
-					notificationDataMap := map[string]interface{}{
-						"TaskID": completedTask.ID,
-						"Date":   time.Now().Format(time.RFC3339),
-						"Data":   update.Output,
+					// По умолчанию, если не указаны on_success и on_failure, отправляем уведомление только при успешном выполнении
+					if !notifyCfg.OnSuccess && !notifyCfg.OnFailure {
+						shouldSendNotification = update.Success
+					} else {
+						// Если указаны флаги, следуем им
+						if update.Success && notifyCfg.OnSuccess {
+							shouldSendNotification = true
+						} else if !update.Success && notifyCfg.OnFailure {
+							shouldSendNotification = true
+						}
 					}
 
-					for _, notifyCfg := range completedTask.Notify {
-						s.logger.Info(completedTask.ID, "Scheduler: Attempting notification type: %s", notifyCfg.Type)
-						var notifierPlugin notification.Notifier
-						var err error
+					if !shouldSendNotification {
+						s.logger.Info(completedTask.ID, "Scheduler: Skipping %s notification due to task status (success=%v)", notifyCfg.Type, update.Success)
+						continue
+					}
 
-						switch notifyCfg.Type {
-						case "file":
-							if notifyCfg.FileNotification.FilePath != "" {
-								// Use the imported alias for the file notifier plugin
-								notifierPlugin = fileNotifierPlugin.NewFileNotifier(notifyCfg.FileNotification)
-							} else {
-								s.logger.Error(completedTask.ID, "Scheduler: File notification configured but FilePath is empty", nil)
-								continue
-							}
-						case "email":
-							s.logger.Info(completedTask.ID, "Scheduler: Email notification type encountered (implementation pending). Recipient(s): %v", notifyCfg.EmailNotification.To)
-							// notifierPlugin = emailNotifier.NewEmailNotifier(notifyCfg.EmailNotification, "smtp.example.com", "587", "user", "pass")
-							continue // Skip until implemented
-						case "slack":
-							s.logger.Info(completedTask.ID, "Scheduler: Slack notification type encountered (implementation pending). Webhook: %s", notifyCfg.SlackNotification.WebhookURL)
-							// notifierPlugin = slackNotifier.NewSlackNotifier(notifyCfg.SlackNotification)
-							continue // Skip until implemented
-						case "telegram":
-							s.logger.Info(completedTask.ID, "Scheduler: Telegram notification type encountered (implementation pending). ChatID: %s", notifyCfg.TelegramNotification.ChatID)
-							// notifierPlugin = telegramNotifier.NewTelegramNotifier(notifyCfg.TelegramNotification)
-							continue // Skip until implemented
-						default:
-							s.logger.Error(completedTask.ID, fmt.Sprintf("Scheduler: Unsupported notification type: %s", notifyCfg.Type), nil)
+					s.logger.Info(completedTask.ID, "Scheduler: Attempting notification type: %s", notifyCfg.Type)
+					var notifierPlugin notification.Notifier
+					var err error
+
+					switch notifyCfg.Type {
+					case "file":
+						if notifyCfg.FileNotification.FilePath != "" {
+							// Use the imported alias for the file notifier plugin
+							notifierPlugin = fileNotifierPlugin.NewFileNotifier(notifyCfg.FileNotification)
+						} else {
+							s.logger.Error(completedTask.ID, "Scheduler: File notification configured but FilePath is empty", nil)
 							continue
 						}
+					case "email":
+						s.logger.Info(completedTask.ID, "Scheduler: Email notification type encountered (implementation pending). Recipient(s): %v", notifyCfg.EmailNotification.To)
+						// notifierPlugin = emailNotifier.NewEmailNotifier(notifyCfg.EmailNotification, "smtp.example.com", "587", "user", "pass")
+						continue // Skip until implemented
+					case "slack":
+						s.logger.Info(completedTask.ID, "Scheduler: Slack notification type encountered (implementation pending). Webhook: %s", notifyCfg.SlackNotification.WebhookURL)
+						// notifierPlugin = slackNotifier.NewSlackNotifier(notifyCfg.SlackNotification)
+						continue // Skip until implemented
+					case "telegram":
+						s.logger.Info(completedTask.ID, "Scheduler: Telegram notification type encountered (implementation pending). ChatID: %s", notifyCfg.TelegramNotification.ChatID)
+						// notifierPlugin = telegramNotifier.NewTelegramNotifier(notifyCfg.TelegramNotification)
+						continue // Skip until implemented
+					default:
+						s.logger.Error(completedTask.ID, fmt.Sprintf("Scheduler: Unsupported notification type: %s", notifyCfg.Type), nil)
+						continue
+					}
 
-						if notifierPlugin != nil {
-							// Pass the map[string]interface{} to the Notify method
-							err = notifierPlugin.Notify(notificationDataMap)
-							if err != nil {
-								s.logger.Error(completedTask.ID, fmt.Sprintf("Scheduler: Failed to send %s notification", notifyCfg.Type), err)
-							} else {
-								s.logger.Info(completedTask.ID, fmt.Sprintf("Scheduler: Successfully sent %s notification", notifyCfg.Type))
-							}
+					if notifierPlugin != nil {
+						// Pass the map[string]interface{} to the Notify method
+						err = notifierPlugin.Notify(notificationDataMap)
+						if err != nil {
+							s.logger.Error(completedTask.ID, fmt.Sprintf("Scheduler: Failed to send %s notification", notifyCfg.Type), err)
+						} else {
+							s.logger.Info(completedTask.ID, fmt.Sprintf("Scheduler: Successfully sent %s notification", notifyCfg.Type))
 						}
 					}
-				} else {
-					s.logger.Info(completedTask.ID, "Scheduler: No notifications configured for this task.")
 				}
+			} else {
+				s.logger.Info(completedTask.ID, "Scheduler: No notifications configured for this task.")
 			}
 
 			// Trigger dependent tasks using the received update (which has exported fields)
