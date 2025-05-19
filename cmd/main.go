@@ -22,7 +22,11 @@ const (
 	defaultConfigPath   = "./config.yaml"
 )
 
+var Version = "dev"
+
 func main() {
+	// Добавляем флаг для указания версии
+	showVersion := flag.Bool("version", false, "Show application version and exit.")
 	// Добавляем флаг для указания пути к конфигурационному файлу
 	configPath := flag.String("config", defaultConfigPath, "Path to the configuration file.")
 	logOutput := flag.String("logoutput", defaultLogOutput, "Log output path (if mode is 'file') or 'stdout'.")
@@ -30,6 +34,11 @@ func main() {
 	tasksDirPath := flag.String("tasksdir", defaultTasksDirPath, "Directory containing task YAML files.")
 	validateTasks := flag.Bool("validate", false, "Validate tasks in the tasks directory and exit.")
 	flag.Parse()
+
+	if *showVersion {
+		fmt.Println("schedulot version:", Version)
+		os.Exit(0)
+	}
 
 	// Пытаемся загрузить конфигурацию из файла
 	var appCfg *config.AppConfig

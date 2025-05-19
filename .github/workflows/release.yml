@@ -1,0 +1,65 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        goos: [linux, windows, darwin]
+        goarch: [amd64, arm64]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+
+      - name: Set version variable
+        id: vars
+        run: echo "::set-output name=VERSION::${GITHUB_REF#refs/tags/v}"
+
+      - name: Build binary
+        env:
+          GOOS: ${{ matrix.goos }}
+          GOARCH: ${{ matrix.goarch }}
+        run: |
+          mkdir -p dist
+          EXT=""
+          if [ "${{ matrix.goos }}" = "windows" ]; then EXT=".exe"; fi
+          go build -ldflags "-X 'main.Version=${{ steps.vars.outputs.VERSION }}'" -o dist/schedulot-${{ matrix.goos }}-${{ matrix.goarch }}$EXT ./cmd
+
+      - name: Copy README and tasks
+        run: |
+          cp README.md dist/
+          mkdir -p dist/tasks
+          cp tasks/*.yaml dist/tasks/ || true
+          cp tasks/*.yml dist/tasks/ || true
+
+      - name: Archive release
+        run: |
+          cd dist
+          for f in schedulot-*; do
+            base="${f%.*}"
+            ext="${f##*.}"
+            if [ "$ext" = "exe" ]; then
+              zip -r $base.zip $f README.md tasks
+            else
+              tar czf $base.tar.gz $f README.md tasks
+            fi
+          done
+
+      - name: Upload release assets
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/*.zip
+            dist/*.tar.gz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
