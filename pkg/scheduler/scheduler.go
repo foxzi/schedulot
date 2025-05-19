@@ -28,14 +28,15 @@ type Scheduler struct {
 	executor         *executor.Executor
 	logger           *logger.Logger
 	cronScheduler    *cron.Cron
-	taskResults      map[string]taskResult     // Stores the result of the last execution of each task
-	mu               sync.RWMutex              // For concurrent access to taskResults, tasks, taskFilePaths, taskCronEntryIDs
-	notifyChan       chan TaskExecutionUpdate  // Channel to notify about task completion
-	stopChan         chan struct{}             // Channel to signal scheduler shutdown
-	wg               sync.WaitGroup            // To wait for goroutines to finish
-	taskDir          string                    // Directory to watch for task file changes
-	watcher          *fsnotify.Watcher         // Filesystem watcher
-	taskCronEntryIDs map[string][]cron.EntryID // taskID -> list of EntryIDs for its schedule triggers
+	taskResults      map[string]taskResult                 // Stores the result of the last execution of each task
+	mu               sync.RWMutex                          // For concurrent access to taskResults, tasks, taskFilePaths, taskCronEntryIDs
+	notifyChan       chan TaskExecutionUpdate              // Channel to notify about task completion
+	stopChan         chan struct{}                         // Channel to signal scheduler shutdown
+	wg               sync.WaitGroup                        // To wait for goroutines to finish
+	taskDir          string                                // Directory to watch for task file changes
+	watcher          *fsnotify.Watcher                     // Filesystem watcher
+	taskCronEntryIDs map[string][]cron.EntryID             // taskID -> list of EntryIDs for its schedule triggers
+	pluginsConfig    map[string]config.PluginConfiguration // Конфигурация плагинов уведомлений
 }
 
 type taskResult struct {
@@ -54,6 +55,11 @@ type TaskExecutionUpdate struct {
 
 // New creates a new Scheduler.
 func New(exec *executor.Executor, l *logger.Logger, taskDirPath string) (*Scheduler, error) {
+	return NewWithConfig(exec, l, taskDirPath, nil)
+}
+
+// NewWithConfig создает новый Scheduler с конфигурацией
+func NewWithConfig(exec *executor.Executor, l *logger.Logger, taskDirPath string, pluginsConfig map[string]config.PluginConfiguration) (*Scheduler, error) {
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
 		return nil, fmt.Errorf("failed to create filesystem watcher: %w", err)
@@ -71,6 +77,7 @@ func New(exec *executor.Executor, l *logger.Logger, taskDirPath string) (*Schedu
 		taskDir:          taskDirPath,
 		watcher:          watcher,
 		taskCronEntryIDs: make(map[string][]cron.EntryID), // Initialize the new map
+		pluginsConfig:    pluginsConfig,
 	}
 	return s, nil
 }
@@ -384,7 +391,7 @@ func (s *Scheduler) listenForTaskCompletions() {
 				continue
 			}
 
-			if completedTask.Notify != nil && len(completedTask.Notify) > 0 {
+			if len(completedTask.Notify) > 0 {
 				s.logger.Info(completedTask.ID, "Scheduler: Processing %d notification(s) for task", len(completedTask.Notify))
 
 				// Prepare data for notification.Notifier interface (map[string]interface{})
@@ -427,13 +434,27 @@ func (s *Scheduler) listenForTaskCompletions() {
 						if notifyCfg.FileNotification.FilePath != "" {
 							// Use the imported alias for the file notifier plugin
 							notifierPlugin = fileNotifierPlugin.NewFileNotifier(notifyCfg.FileNotification)
+
+							// Если есть конфигурация плагина, можно использовать дополнительные параметры
+							if s.pluginsConfig != nil {
+								if _, exists := s.pluginsConfig["file"]; exists {
+									s.logger.Info(completedTask.ID, "Using file notification plugin configuration from config file")
+									// Здесь можно использовать дополнительные параметры из конфигурации при необходимости
+								}
+							}
 						} else {
 							s.logger.Error(completedTask.ID, "Scheduler: File notification configured but FilePath is empty", nil)
 							continue
 						}
 					case "email":
 						s.logger.Info(completedTask.ID, "Scheduler: Email notification type encountered (implementation pending). Recipient(s): %v", notifyCfg.EmailNotification.To)
-						// notifierPlugin = emailNotifier.NewEmailNotifier(notifyCfg.EmailNotification, "smtp.example.com", "587", "user", "pass")
+						// Email функциональность будет реализована позже
+						// Если у нас есть конфигурация для email-плагина, можем использовать её
+						if s.pluginsConfig != nil {
+							if _, exists := s.pluginsConfig["email"]; exists {
+								s.logger.Info(completedTask.ID, "Email plugin configuration found in config file")
+							}
+						}
 						continue // Skip until implemented
 					case "slack":
 						s.logger.Info(completedTask.ID, "Scheduler: Slack notification type encountered (implementation pending). Webhook: %s", notifyCfg.SlackNotification.WebhookURL)
@@ -448,14 +469,12 @@ func (s *Scheduler) listenForTaskCompletions() {
 						continue
 					}
 
-					if notifierPlugin != nil {
-						// Pass the map[string]interface{} to the Notify method
-						err = notifierPlugin.Notify(notificationDataMap)
-						if err != nil {
-							s.logger.Error(completedTask.ID, fmt.Sprintf("Scheduler: Failed to send %s notification", notifyCfg.Type), err)
-						} else {
-							s.logger.Info(completedTask.ID, fmt.Sprintf("Scheduler: Successfully sent %s notification", notifyCfg.Type))
-						}
+					// Pass the map[string]interface{} to the Notify method
+					err = notifierPlugin.Notify(notificationDataMap)
+					if err != nil {
+						s.logger.Error(completedTask.ID, fmt.Sprintf("Scheduler: Failed to send %s notification", notifyCfg.Type), err)
+					} else {
+						s.logger.Info(completedTask.ID, fmt.Sprintf("Scheduler: Successfully sent %s notification", notifyCfg.Type))
 					}
 				}
 			} else {

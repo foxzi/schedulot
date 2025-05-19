@@ -1,0 +1,38 @@
+# Конфигурационный файл для приложения gotask2
+
+# Настройки логирования
+log_settings:
+  log_file_path: "./app.log"  # Путь к файлу логов (если log_mode = "file")
+  log_mode: "stdout"            # Режим логирования: "file" или "stdout"
+
+# Настройки задач
+tasks_settings:
+  tasks_folder_path: "./tasks"  # Путь к папке с задачами
+
+# Настройки плагинов уведомлений
+notification_plugins:
+  email:
+    type: "email"
+    params:
+      smtp_host: "smtp.example.com"
+      smtp_port: "587"
+      smtp_username: "user@example.com"
+      smtp_password: "your_password"
+      from_email: "notifications@example.com"
+      
+  slack:
+    type: "slack"
+    params:
+      webhook_url: "https://hooks.slack.com/services/TXXXXXXXXX/BXXXXXXXXX/XXXXXXXXXXXXXXXXXXXXXXXX"
+      default_channel: "#notifications"
+      
+  file:
+    type: "file"
+    params:
+      default_file_path: "/tmp/notifications.log"
+      
+  telegram:
+    type: "telegram"
+    params:
+      bot_token: "123456789:XXXXXXXXXXXXXXXXXXXXX"
+      default_chat_id: "-1234567899"

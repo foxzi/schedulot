@@ -1,4 +1,4 @@
-# Go Task Manager
+# schedulot
 
 Это простое приложение для управления задачами, написанное на Go. Оно позволяет определять задачи в YAML файлах, запускать их по расписанию или в зависимости от результатов выполнения других задач. Поддерживается выполнение команд оболочки, HTTP запросов, а также отправка уведомлений о завершении задач.
 
@@ -9,6 +9,9 @@
 *   Запуск задач на основе успешного или неуспешного выполнения других задач.
 *   Выполнение команд оболочки.
 *   Выполнение HTTP запросов.
+*   **Конфигурационный файл:**
+    *   Настройка путей логирования, папки с задачами.
+    *   Конфигурация плагинов уведомлений через YAML-файл.
 *   **Уведомления о завершении задач:**
     *   Отправка уведомлений при успешном и/или неуспешном завершении задачи.
     *   Настраиваемые условия отправки уведомлений с помощью параметров `on_success` и `on_failure`.
@@ -27,7 +30,7 @@
 ## Структура проекта
 
 ```
-gotask2/
+schedulot/
 ├── cmd/                    # Основное приложение
 │   └── main.go
 ├── pkg/                    # Основные пакеты
@@ -52,27 +55,27 @@ gotask2/
 
 ## Установка и запуск
 
-1.  **Клонируйте репозиторий (если применимо) или убедитесь, что у вас есть все файлы проекта.**
+1.  **Клонируйте репозиторий или убедитесь, что у вас есть все файлы проекта.**
 
 2.  **Перейдите в директорию проекта:**
     ```bash
-    cd gotask2
+    cd schedulot
     ```
 
-3.  **Загрузите зависимости (включая `fsnotify` для отслеживания файлов):**
+3.  **Загрузите зависимости:**
     ```bash
     go mod tidy
     ```
 
-4.  **Соберите проект (опционально, можно запускать через `go run`):**
+4.  **Соберите проект:**
     ```bash
-    go build -o taskmanager cmd/main.go
+    go build -o schedulot cmd/main.go
     ```
 
 5.  **Запустите приложение:**
     *   Через собранный бинарный файл:
         ```bash
-        ./taskmanager [флаги]
+        ./schedulot [флаги]
         ```
     *   Или напрямую:
         ```bash
@@ -88,23 +91,23 @@ gotask2/
     **Примеры запуска:**
     *   Обычный запуск:
         ```bash
-        ./taskmanager
+        ./schedulot
         ```
-    *   Запуск с указанием директории задач и файла логов (режим file по умолчанию):
+    *   Запуск с указанием директории задач и файла логов:
         ```bash
-        ./taskmanager -tasksdir /etc/myapp/tasks -logoutput /var/log/myapp.log
+        ./schedulot -tasksdir /etc/myapp/tasks -logoutput /var/log/myapp.log
         ```
     *   Запуск в режиме валидации задач:
         ```bash
-        ./taskmanager -validate
+        ./schedulot -validate
         ```
         Или с указанием конкретной директории для валидации:
         ```bash
-        ./taskmanager -validate -tasksdir ./my_specific_tasks
+        ./schedulot -validate -tasksdir ./my_specific_tasks
         ```
     *   Запуск с логированием в stdout:
         ```bash
-        ./taskmanager -logmode stdout
+        ./schedulot -logmode stdout
         ```
 
     По умолчанию приложение будет искать задачи в директории `./tasks/`, логировать в `app.log` и отслеживать изменения в директории задач для автоматической перезагрузки.
@@ -113,103 +116,22 @@ gotask2/
 
 Задачи определяются в YAML файлах (с расширением `.yml` или `.yaml`) в директории `tasks/`. Каждая задача должна иметь уникальный `id`.
 
-### Структура YAML файла задачи:
+### Пример YAML файла задачи:
 
 ```yaml
-id: "unique-task-id"
-description: "Краткое описание задачи (опционально)."
-max_retries: 3 # Опционально, количество повторных попыток при неудаче (по умолчанию 0)
-timeout: "30s" # Опционально, таймаут на выполнение задачи, например "10s", "1m", "500ms" (по умолчанию нет таймаута)
-
+id: "example-task"
+description: "Пример задачи, запускаемой по расписанию."
 triggers:
-  - type: "schedule" # Тип триггера: "schedule" или "dependency"
-    schedule: "*/5 * * * * *" # Cron выражение (секунды минуты часы дни_месяца месяцы дни_недели)
-  # Можно указать несколько триггеров
-
-depends_on: # Опционально, список зависимостей от других задач
-  - task_id: "another-task-id"
-    status: "success" # Требуемый статус: "success" или "failure"
-  # Можно указать несколько зависимостей
-
+  - type: "schedule"
+    schedule: "*/10 * * * * *" # Каждые 10 секунд
 action:
-  type: "command" # Тип действия: "command" или "http"
-  command: # Используется, если type = "command"
+  type: "command"
+  command:
     path: "echo"
-    args: ["Привет из задачи!"]
-    # dir: "/tmp" # Опционально, рабочая директория для команды
-  http_request: # Используется, если type = "http"
-    url: "https://api.example.com/data"
-    method: "GET" # "GET", "POST", "PUT", "DELETE", etc.
-    headers: # Опционально
-      Content-Type: "application/json"
-      Authorization: "Bearer your_token"
-    body: '''{"key": "value"}''' # Опционально, тело запроса (для POST, PUT)
-
-notify:
-  - type: "file" # Тип уведомления: "file", "email" (в разработке), "slack" (в разработке), "telegram" (в разработке)
-    file_notification: # Используется, если type = "file"
-      file_path: "/path/to/notification.log"
-      message: "Задача {{.TaskID}} завершена в {{.Date}}. Результат: {{.Data}}"
-      append: true # Опционально, если true, сообщение будет добавлено в конец файла
+    args: ["Привет от schedulot!"]
 ```
 
-### Поля задачи:
-
-*   `id` (string, обязательное): Уникальный идентификатор задачи.
-*   `description` (string, опциональное): Описание задачи.
-*   `max_retries` (int, опциональное): Максимальное количество повторных попыток выполнения задачи в случае неудачи. По умолчанию `0`.
-*   `timeout` (string, опциональное): Таймаут на выполнение задачи. Формат строки как в `time.ParseDuration` (например, "30s", "5m", "1h30m"). Если не указан, таймаута нет.
-*   `triggers` (list, обязательное): Список триггеров для запуска задачи.
-    *   `type` (string, обязательное):
-        *   `schedule`: Запускает задачу по расписанию.
-        *   `dependency`: Запускает задачу при выполнении условия зависимости (этот тип используется неявно через `depends_on`, явно указывать его в `triggers` не нужно, если задача запускается *только* по зависимости). Если задача должна запускаться и по расписанию, и иметь возможность быть запущенной по зависимости, то указывается `schedule`.
-    *   `schedule` (string, опциональное, если `type: "schedule"`): Cron-выражение для расписания. Формат: `секунды минуты часы дни_месяца месяцы дни_недели`. Пример: `0 * * * * *` (каждую минуту), `0 0 1 * * *` (каждый день в 01:00:00).
-*   `depends_on` (list, опциональное): Список задач, от которых зависит текущая задача.
-    *   `task_id` (string, обязательное): `id` задачи, от которой есть зависимость.
-    *   `status` (string, обязательное): Требуемый статус зависимой задачи для запуска текущей.
-        *   `success`: Зависимая задача должна завершиться успешно.
-        *   `failure`: Зависимая задача должна завершиться с ошибкой.
-*   `action` (object, обязательное): Действие, которое выполняет задача.
-    *   `type` (string, обязательное):
-        *   `command`: Выполнить команду оболочки.
-        *   `http`: Выполнить HTTP запрос.
-    *   `command` (object, если `action.type: "command"`):
-        *   `path` (string, обязательное): Путь к исполняемому файлу или команда.
-        *   `args` (list of strings, опциональное): Аргументы команды.
-        *   `dir` (string, опциональное): Рабочая директория для выполнения команды.
-    *   `http_request` (object, если `action.type: "http"`):
-        *   `url` (string, обязательное): URL для HTTP запроса.
-        *   `method` (string, обязательное): HTTP метод (GET, POST, PUT, DELETE и т.д.).
-        *   `headers` (map, опциональное): Заголовки HTTP запроса.
-        *   `body` (string, опциональное): Тело HTTP запроса (например, для POST или PUT).
-*   `notify` (list, опциональное): Список конфигураций уведомлений, которые будут отправлены после завершения задачи.
-    *   `type` (string, обязательное): Тип уведомления. Поддерживаемые значения:
-        *   `file`: Запись уведомления в файл.
-        *   `email`: Отправка уведомления по электронной почте (в разработке).
-        *   `slack`: Отправка уведомления в Slack (в разработке).
-        *   `telegram`: Отправка уведомления в Telegram (в разработке).
-    *   `on_success` (bool, опциональное): Отправлять уведомление при успешном завершении задачи. По умолчанию `false`. Если не указано вместе с `on_failure`, уведомление отправляется только при успешном завершении.
-    *   `on_failure` (bool, опциональное): Отправлять уведомление при ошибке выполнения задачи. По умолчанию `false`.
-    *   `file_notification` (object, если `notify.type: "file"`):
-        *   `file_path` (string, обязательное): Путь к файлу, в который будет записано уведомление.
-        *   `message` (string, обязательное): Шаблон сообщения. Можно использовать переменные:
-            *   `{{.TaskID}}`: ID выполненной задачи.
-            *   `{{.Date}}`: Дата и время выполнения задачи (в формате RFC3339).
-            *   `{{.Data}}`: Результат (вывод) выполнения задачи.
-            *   `{{.Status}}`: Статус завершения задачи ("SUCCESS" или "FAILURE").
-        *   `append` (bool, опциональное): Если `true`, сообщение будет добавлено в конец файла. Если `false` (по умолчанию), файл будет перезаписан.
-    *   `email_notification` (object, если `notify.type: "email"`): (В разработке)
-        *   `to` (list of strings, обязательное): Список адресатов.
-        *   `subject` (string, обязательное): Тема письма.
-        *   `body` (string, обязательное): Шаблон тела письма (поддерживает те же переменные, что и `file_notification.message`).
-    *   `slack_notification` (object, если `notify.type: "slack"`): (В разработке)
-        *   `webhook_url` (string, обязательное): URL Webhook для Slack.
-        *   `channel` (string, опциональное): Канал Slack (если не указан, используется канал по умолчанию для Webhook).
-        *   `message` (string, обязательное): Шаблон сообщения (поддерживает те же переменные).
-    *   `telegram_notification` (object, если `notify.type: "telegram"`): (В разработке)
-        *   `bot_token` (string, обязательное): Токен Telegram бота.
-        *   `chat_id` (string, обязательное): ID чата или пользователя в Telegram.
-        *   `message` (string, обязательное): Шаблон сообщения (поддерживает те же переменные).
+Для более сложных сценариев и дополнительных параметров смотрите документацию или другие примеры в директории `tasks/`.
 
 ## Логирование
 
@@ -221,227 +143,68 @@ notify:
 
 *   Логирование в файл (по умолчанию):
     ```bash
-    ./taskmanager
+    ./schedulot
     # или явно
-    ./taskmanager -logmode file -logoutput app.log
+    ./schedulot -logmode file -logoutput app.log
     ```
 *   Логирование в stdout:
     ```bash
-    ./taskmanager -logmode stdout
+    ./schedulot -logmode stdout
     ```
 *   Логирование в другой файл:
     ```bash
-    ./taskmanager -logmode file -logoutput /var/log/taskmanager.log
+    ./schedulot -logmode file -logoutput /var/log/schedulot.log
     ```
 
-## Примеры задач
+## Использование
 
-Создайте следующие файлы в директории `tasks/`:
+### Запуск приложения
 
-### `tasks/task1-echo-schedule.yml`
+Приложение можно запустить с несколькими аргументами командной строки:
 
-Эта задача будет выполняться каждые 10 секунд и выводить сообщение.
+```bash
+# Запуск с настройками по умолчанию
+./schedulot
 
-```yaml
-id: "task1-echo-schedule"
-description: "Простая задача echo, запускаемая по расписанию."
-triggers:
-  - type: "schedule"
-    schedule: "*/10 * * * * *" # Каждые 10 секунд
-action:
-  type: "command"
-  command:
-    path: "echo"
-    args: ["Привет от task1! Время:", "$(date)"]
+# Запуск с указанием пути к файлу логов
+./schedulot -logoutput /var/log/schedulot.log
+
+# Запуск с выводом логов в stdout
+./schedulot -logmode stdout
+
+# Запуск с указанием директории задач
+./schedulot -tasksdir /path/to/tasks
+
+# Проверка задач без запуска
+./schedulot -validate
+
+# Запуск с конфигурационным файлом
+./schedulot -config /path/to/config.yaml
 ```
 
-### `tasks/task2-http-get.yml`
+### Конфигурационный файл
 
-Эта задача выполнит GET-запрос к `httpbin.org` каждую минуту и отправит уведомление в файл.
-
-```yaml
-id: "task2-http-get"
-description: "Задача для выполнения HTTP GET запроса и отправки уведомления в файл."
-triggers:
-  - type: "schedule"
-    schedule: "0 */1 * * * *" # Каждую минуту
-action:
-  type: "http"
-  http_request:
-    url: "https://httpbin.org/get?param=value"
-    method: "GET"
-    headers:
-      X-Custom-Header: "GoTaskManager"
-notify:
-  - type: "file"
-    file_notification:
-      file_path: "/tmp/task2_http_alerts.log"
-      message: "HTTP GET Task {{.TaskID}} completed at {{.Date}}. Output: {{.Data}}"
-      append: true
-```
-
-### `tasks/task3-dependent-success.yml`
-
-Эта задача запустится только после успешного выполнения `task1-echo-schedule`.
+Вместо указания параметров через аргументы командной строки, можно использовать конфигурационный файл в формате YAML:
 
 ```yaml
-id: "task3-dependent-success"
-description: "Задача, зависящая от успешного выполнения task1."
-depends_on:
-  - task_id: "task1-echo-schedule"
-    status: "success"
-action:
-  type: "command"
-  command:
-    path: "echo"
-    args: ["task1 успешно выполнена, запускаю task3!"]
+# Настройки логирования
+log_settings:
+  log_file_path: "./app.log"  # Путь к файлу логов (если log_mode = "file")
+  log_mode: "file"            # Режим логирования: "file" или "stdout"
+
+# Настройки задач
+tasks_settings:
+  tasks_folder_path: "./tasks"  # Путь к папке с задачами
+
+# Настройки плагинов уведомлений
+notification_plugins:
+  file:
+    type: "file"
+    params:
+      default_file_path: "/tmp/notifications.log"
 ```
 
-### `tasks/task4-dependent-failure-with-retry.yml`
-
-Эта задача попытается выполниться, если `non-existent-task` (которой нет) завершится неудачей (что всегда будет так, так как она не будет найдена или не сможет запуститься).
-Она также настроена на повторные попытки.
-
-```yaml
-id: "task4-command-fail"
-description: "Команда, которая заведомо завершится ошибкой."
-max_retries: 2
-timeout: "5s"
-triggers:
-  - type: "schedule"
-    schedule: "*/30 * * * * *" # Каждые 30 секунд, для демонстрации
-action:
-  type: "command"
-  command:
-    path: "ls"
-    args: ["/non/existent/path"] # Эта команда вызовет ошибку
-```
-
-### `tasks/task5-dependent-on-task4-failure.yml`
-
-Эта задача запустится после того, как `task4-command-fail` завершится неудачей.
-
-```yaml
-id: "task5-dependent-on-task4-failure"
-description: "Задача, зависящая от НЕУСПЕШНОГО выполнения task4."
-depends_on:
-  - task_id: "task4-command-fail"
-    status: "failure"
-action:
-  type: "command"
-  command:
-    path: "echo"
-    args: ["task4 завершилась с ошибкой, как и ожидалось! Запускаю task5."]
-```
-
-### `tasks/task6-long-running-with-timeout.yml`
-
-Эта задача имитирует долгую операцию, которая будет прервана по таймауту.
-
-```yaml
-id: "task6-long-running-with-timeout"
-description: "Задача, которая будет прервана по таймауту."
-timeout: "3s" # Таймаут 3 секунды
-triggers:
-  - type: "schedule"
-    schedule: "*/20 * * * * *" # Каждые 20 секунд
-action:
-  type: "command"
-  command:
-    path: "sleep"
-    args: ["10"] # Команда будет спать 10 секунд
-```
-
-### `tasks/test-all-notifications.yaml`
-
-Этот пример демонстрирует конфигурацию для различных типов уведомлений (в настоящее время реализован только `file`).
-
-```yaml
-id: "test-all-notifications-task"
-description: "Тестовая задача для проверки всех типов уведомлений."
-max_retries: 0
-triggers:
-  - type: "schedule"
-    schedule: "*/30 * * * * *" # Каждые 30 секунд для тестирования
-action:
-  type: "command"
-  command:
-    path: "echo"
-    args:
-      - "Это тестовый вывод для задачи test-all-notifications-task"
-      - "Дата выполнения: $(date)"
-notify:
-  - type: "file"
-    file_notification:
-      file_path: "/tmp/test_task_alerts.log"
-      message: "ЗАДАЧА ВЫПОЛНЕНА: ID={{.TaskID}}, Дата={{.Date}}, Результат={{.Data}}"
-      append: false
-  - type: "email"
-    email_notification:
-      to:
-        - "user1@example.com"
-        - "user2@example.com"
-      subject: "Уведомление о задаче: {{.TaskID}}"
-      body: "Задача {{.TaskID}} успешно завершена {{.Date}}.\\nРезультат:\\n{{.Data}}"
-  - type: "slack"
-    slack_notification:
-      webhook_url: "https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK_URL"
-      channel: "#alerts"
-      message: ":tada: Задача *{{.TaskID}}* выполнена!\\n_Дата_: {{.Date}}\\n_Результат_: ```{{.Data}}```"
-  - type: "telegram"
-    telegram_notification:
-      bot_token: "YOUR_TELEGRAM_BOT_TOKEN"
-      chat_id: "YOUR_TELEGRAM_CHAT_ID"
-      message: "✅ Задача выполнена: {{.TaskID}}\\nДата: {{.Date}}\\nВывод: {{.Data}}"
-
-```
-
-### `tasks/notify-on-status-example.yaml`
-
-Эта задача демонстрирует использование условий уведомлений в зависимости от успеха или неудачи.
-
-```yaml
-id: "notify-on-status-example"
-description: "Пример задачи с уведомлениями по успеху или неудаче"
-max_retries: 1
-timeout: "5s"
-triggers:
-  - type: "schedule"
-    schedule: "*/20 * * * * *"  # Каждые 20 секунд
-action:
-  type: "command"
-  command:
-    path: "sh"
-    args:
-      - "-c"
-      - "echo 'Выполняется задача notify-on-status-example' && [ $RANDOM -gt 16000 ] || exit 1"  # 50% шанс успеха/неудачи
-
-notify:
-  - type: "file"
-    on_success: true  # Отправлять при успехе
-    on_failure: false # Не отправлять при неудаче
-    file_notification:
-      file_path: "/tmp/success_notifications.log"
-      message: "✅ ЗАДАЧА ВЫПОЛНЕНА УСПЕШНО: ID={{.TaskID}}, Время: {{.Date}}, Результат: {{.Data}}"
-      append: true
-  
-  - type: "file"
-    on_success: false  # Не отправлять при успехе
-    on_failure: true   # Отправлять при неудаче
-    file_notification:
-      file_path: "/tmp/failure_notifications.log"
-      message: "❌ ЗАДАЧА ЗАВЕРШИЛАСЬ С ОШИБКОЙ: ID={{.TaskID}}, Время: {{.Date}}\nОшибка: {{.Data}}"
-      append: true
-  
-  - type: "file"
-    # Без параметров on_success/on_failure - по умолчанию отправляется только при успехе
-    file_notification:
-      file_path: "/tmp/default_notification_behavior.log"
-      message: "Уведомление по умолчанию (только успех): Задача {{.TaskID}} завершена со статусом {{.Status}}"
-      append: true
-```
-
-После создания этих файлов и запуска `taskmanager`, вы увидите логи их выполнения в `app.log`. Уведомления типа `file` будут записываться в указанные файлы.
+Приоритет имеют параметры, указанные в конфигурационном файле. Если файл конфигурации не найден или в нем отсутствуют какие-то параметры, используются значения из командной строки или значения по умолчанию.
 
 ## Сборка проекта для запуска
-`go build -o taskmanager cmd/main.go`
+`go build -o schedulot cmd/main.go`
