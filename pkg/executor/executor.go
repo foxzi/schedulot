@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os/exec"
 	"strings"
+	"text/template"
 	"time"
 
 	"github.com/piligrim/gotask2/pkg/logger"
@@ -45,7 +46,23 @@ func (e *Executor) ExecuteTask(t task.Task) (string, error) {
 			err = fmt.Errorf("command action is nil")
 			break
 		}
-		cmd := exec.CommandContext(ctx, t.Action.Command.Path, t.Action.Command.Args...)
+		// --- Шаблонизация аргументов с поддержкой Parent* ---
+		args := make([]string, len(t.Action.Command.Args))
+		for i, arg := range t.Action.Command.Args {
+			ctx := map[string]string{
+				"TaskID":       t.ID,
+				"Date":         time.Now().Format("2006-01-02 15:04:05"),
+				"Data":         "", // Можно добавить данные, если есть
+				"ParentTaskID": t.ParentTaskID,
+				"ParentDate":   t.ParentDate,
+				"ParentData":   t.ParentData,
+			}
+			tmpl, _ := template.New("arg").Parse(arg)
+			var sb strings.Builder
+			_ = tmpl.Execute(&sb, ctx)
+			args[i] = sb.String()
+		}
+		cmd := exec.CommandContext(ctx, t.Action.Command.Path, args...)
 		if t.Action.Command.Dir != "" {
 			cmd.Dir = t.Action.Command.Dir
 		}

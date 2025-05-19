@@ -7,4 +7,10 @@ action:
   type: "command"
   command:
     path: "echo"
-    args: ["Дочерняя задача выполнена после успеха родительской"]
+    args: ["Родитель: {{.ParentTaskID}}", "Дата: {{.ParentDate}}", "Данные: {{.ParentData}}"]
+notify:
+  - type: "file"
+    file_notification:
+      file_path: "/tmp/example_child_notify.log"
+      message: "Дочерняя задача {{.TaskID}} выполнена после успеха родительской. Время: {{.Date}}"
+      append: true

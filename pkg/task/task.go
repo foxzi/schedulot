@@ -40,6 +40,10 @@ type Task struct {
 	MaxRetries  int                               `yaml:"max_retries,omitempty"`
 	Timeout     time.Duration                     `yaml:"timeout,omitempty"` // e.g., "30s", "5m"
 	Notify      []notification.NotificationConfig `yaml:"notify,omitempty"`  // Added field
+	// --- Runtime context for templating ---
+	ParentTaskID string `yaml:"-"`
+	ParentDate   string `yaml:"-"`
+	ParentData   string `yaml:"-"`
 }
 
 // Trigger defines how a task is initiated.

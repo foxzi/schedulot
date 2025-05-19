@@ -138,6 +138,16 @@ func (s *Scheduler) tryRunTask(taskID string, dependentTask *TaskExecutionUpdate
 		return
 	}
 
+	// --- Передача Parent* в дочернюю задачу ---
+	if dependentTask != nil {
+		parentResult, ok := s.taskResults[dependentTask.TaskID]
+		if ok {
+			t.ParentTaskID = dependentTask.TaskID
+			t.ParentDate = time.Now().Format("2006-01-02 15:04:05")
+			t.ParentData = parentResult.output
+		}
+	}
+
 	if s.checkDependencies(t, dependentTask) {
 		s.runTask(t)
 	}
