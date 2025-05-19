@@ -1,0 +1,10 @@
+id: "example-parent"
+description: "Родительская задача, запускается по расписанию."
+triggers:
+  - type: "schedule"
+    schedule: "*/5 * * * * *" # Каждые 5 секунд
+action:
+  type: "command"
+  command:
+    path: "echo"
+    args: ["Выполнена родительская задача"]

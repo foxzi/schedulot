@@ -16,14 +16,12 @@ action:
 notify:
   - type: "file"
     on_success: true  # Отправлять при успехе
-    on_failure: false # Не отправлять при неудаче
     file_notification:
       file_path: "/tmp/success_notifications.log"
       message: "✅ ЗАДАЧА ВЫПОЛНЕНА УСПЕШНО: ID={{.TaskID}}, Время: {{.Date}}, Результат: {{.Data}}"
       append: true
   
   - type: "file"
-    on_success: false  # Не отправлять при успехе
     on_failure: true   # Отправлять при неудаче
     file_notification:
       file_path: "/tmp/failure_notifications.log"

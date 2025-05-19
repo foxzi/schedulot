@@ -1,0 +1,10 @@
+id: "example-child"
+description: "Дочерняя задача, запускается только при успешном завершении example-parent."
+depends_on:
+  - task_id: "example-parent"
+    status: "success"
+action:
+  type: "command"
+  command:
+    path: "echo"
+    args: ["Дочерняя задача выполнена после успеха родительской"]

@@ -1,0 +1,10 @@
+id: "example-on-failure"
+description: "Задача, которая запускается при неудачном завершении example-parent."
+depends_on:
+  - task_id: "example-parent"
+    status: "failure"
+action:
+  type: "command"
+  command:
+    path: "echo"
+    args: ["Выполнена задача после неудачи родительской"]

@@ -1,0 +1,16 @@
+id: "test-all-notifications-task"
+description: "Тестовая задача для проверки всех типов оповещений."
+triggers:
+  - type: "schedule"
+    schedule: "*/10 * * * * *" # Каждые 10 секунд
+action:
+  type: "command"
+  command: # Изменено с command_action на command
+    path: "echo" # Изменено с command на path
+    args: ["Это тестовые данные из задачи для оповещения."] # Аргументы теперь в списке
+notify:
+  - type: "file"
+    file_notification:
+      file_path: "/tmp/test_task_alerts.log"
+      message: "Файл: Задача {{.TaskID}} выполнена {{.Date}} test-all-notifications-task. Данные: {{.Data}}"
+      append: true

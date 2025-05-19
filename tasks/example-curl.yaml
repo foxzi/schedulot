@@ -1,8 +1,8 @@
-id: "task2-http-get"
+id: "task2-http-get-example"
 description: "Задача для выполнения HTTP GET запроса."
 triggers:
   - type: "schedule"
-    schedule: "0 * * * * *" # Каждую минуту
+    schedule: "0 * * * * *" # Каждую минуту в 0 секунд
 action:
   type: "http"
   http_request:

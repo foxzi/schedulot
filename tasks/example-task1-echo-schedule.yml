@@ -1,4 +1,4 @@
-id: "task1-echo-schedule"
+id: "task1-echo-schedule-example"
 description: "Простая задача echo, запускаемая по расписанию."
 triggers:
   - type: "schedule"
