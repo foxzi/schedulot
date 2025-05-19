@@ -232,3 +232,33 @@ action:
 ```
 
 > Эти переменные работают только в дочерних задачах, зависящих от других задач, и только в аргументах команд. В уведомлениях (`notify`) используются стандартные переменные (`{{.TaskID}}`, `{{.Date}}`, `{{.Data}}`).
+
+### Пример: дочерняя задача с HTTP POST-запросом и переменными родителя
+
+```yaml
+id: "example-child-http"
+description: "Дочерняя задача, отправляющая POST-запрос с данными родителя."
+depends_on:
+  - task_id: "example-parent"
+    status: "success"
+action:
+  type: "http"
+  http_request:
+    url: "https://webhook.site/ff1fae06-a602-4af2-abcd-fa9814169850"
+    method: "POST"
+    headers:
+      Content-Type: "application/json"
+      X-Parent-Task: "{{.ParentTaskID}}"
+    body: |
+      {
+        "parent_id": "{{.ParentTaskID}}",
+        "parent_date": "{{.ParentDate}}",
+        "parent_data": "{{.ParentData}}"
+      }
+notify:
+  - type: "file"
+    file_notification:
+      file_path: "/tmp/example_child_http_notify.log"
+      message: "HTTP child task {{.TaskID}} completed after parent. Time: {{.Date}}"
+      append: true
+```

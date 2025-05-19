@@ -85,21 +85,45 @@ func (e *Executor) ExecuteTask(t task.Task) (string, error) {
 			break
 		}
 		reqAction := t.Action.HTTPRequest
+
+		// --- Шаблонизация для url, headers, body ---
+		tmplCtx := map[string]string{
+			"TaskID":       t.ID,
+			"Date":         time.Now().Format("2006-01-02 15:04:05"),
+			"Data":         "", // Можно добавить данные, если есть
+			"ParentTaskID": t.ParentTaskID,
+			"ParentDate":   t.ParentDate,
+			"ParentData":   t.ParentData,
+		}
+		// url
+		tmpl, _ := template.New("url").Parse(reqAction.URL)
+		var urlBuf strings.Builder
+		_ = tmpl.Execute(&urlBuf, tmplCtx)
+		url := urlBuf.String()
+		// body
 		var reqBody io.Reader
 		if reqAction.Body != "" {
-			reqBody = strings.NewReader(reqAction.Body)
+			tmpl, _ := template.New("body").Parse(reqAction.Body)
+			var bodyBuf strings.Builder
+			_ = tmpl.Execute(&bodyBuf, tmplCtx)
+			reqBody = strings.NewReader(bodyBuf.String())
 		}
-
-		req, httpErr := http.NewRequestWithContext(ctx, strings.ToUpper(reqAction.Method), reqAction.URL, reqBody)
+		// headers
+		headers := make(map[string]string)
+		for k, v := range reqAction.Headers {
+			tmpl, _ := template.New("header").Parse(v)
+			var hBuf strings.Builder
+			_ = tmpl.Execute(&hBuf, tmplCtx)
+			headers[k] = hBuf.String()
+		}
+		req, httpErr := http.NewRequestWithContext(ctx, strings.ToUpper(reqAction.Method), url, reqBody)
 		if httpErr != nil {
 			err = fmt.Errorf("failed to create HTTP request: %w", httpErr)
 			break
 		}
-
-		for key, val := range reqAction.Headers {
+		for key, val := range headers {
 			req.Header.Set(key, val)
 		}
-
 		client := &http.Client{}
 		resp, httpErr := client.Do(req)
 		if httpErr != nil {
@@ -107,14 +131,12 @@ func (e *Executor) ExecuteTask(t task.Task) (string, error) {
 			break
 		}
 		defer resp.Body.Close()
-
 		bodyBytes, readErr := io.ReadAll(resp.Body)
 		if readErr != nil {
 			err = fmt.Errorf("failed to read HTTP response body: %w", readErr)
 			break
 		}
 		output = string(bodyBytes)
-
 		if resp.StatusCode < 200 || resp.StatusCode >= 300 {
 			err = fmt.Errorf("http request failed with status %s: %s", resp.Status, output)
 		}
