@@ -352,9 +352,9 @@ func (s *Scheduler) removeCronJobs(taskID string) {
 			s.cronScheduler.Remove(entryID)
 		}
 		delete(s.taskCronEntryIDs, taskID) // Clean up the map entry for this task
-		s.logger.Info(taskID, "Successfully removed cron entries and map key for task", taskID)
+		s.logger.Info(taskID, "Successfully removed cron entries and map key for task: %s", taskID)
 	} else {
-		s.logger.Info(taskID, "No cron entries found in map to remove for task")
+		s.logger.Info(taskID, "No cron entries found in map to remove for task: %s", taskID)
 	}
 }
 
